@@ -9,34 +9,36 @@ import (
 type Transaction interface {
 	Sender() string
 	Receiver() string
-	Amount() int
+	Amount() float64
 }
 
 type Block interface {
 	Nonce() int
 	PreviousHash() [32]byte
 	TimeStamp() time.Time
-	Transactions() []string
+	Transactions() []Transaction
 	Hash() [32]byte
+	CreateAppendTransaction(sender string, receiver string, amount float64) Transaction
 }
 
 type BlockChain interface {
 	TransactionPool() []string
 	Chain() []Block
-	CreateBlock(nonce int, previousHash [32]byte) Block
+	CreateAppendBlock(nonce int, previousHash [32]byte) *Block
+	LastBlock() Block
 }
 
 type transaction struct {
 	sender   string
 	receiver string
-	amount   int
+	amount   float64
 }
 
 type block struct {
 	nonce        int
 	prevHash     [32]byte
 	timeStamp    time.Time
-	transactions []string
+	transactions []Transaction
 }
 
 type blockChain struct {
@@ -44,7 +46,7 @@ type blockChain struct {
 	chain           []Block
 }
 
-func newTransaction(sender string, receiver string, amount int) Transaction {
+func newTransaction(sender string, receiver string, amount float64) Transaction {
 	return &transaction{
 		sender:   sender,
 		receiver: receiver,
@@ -60,15 +62,15 @@ func (t *transaction) Receiver() string {
 	return t.receiver
 }
 
-func (t *transaction) Amount() int {
+func (t *transaction) Amount() float64 {
 	return t.amount
 }
 
 func (t *transaction) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
-		Sender   string `json:"sender"`
-		Receiver string `json:"receiver"`
-		Amount   int    `json:"amount"`
+		Sender   string  `json:"sender"`
+		Receiver string  `json:"receiver"`
+		Amount   float64 `json:"amount"`
 	}{
 		Sender:   t.Sender(),
 		Receiver: t.Receiver(),
@@ -97,7 +99,7 @@ func (b *block) TimeStamp() time.Time {
 	return b.timeStamp
 }
 
-func (b *block) Transactions() []string {
+func (b *block) Transactions() []Transaction {
 	return b.transactions
 }
 
@@ -106,13 +108,19 @@ func (b *block) Hash() [32]byte {
 	return sha256.Sum256([]byte(m))
 }
 
+func (b *block) CreateAppendTransaction(sender string, receiver string, amount float64) Transaction {
+	t := newTransaction(sender, receiver, amount)
+	b.transactions = append(b.transactions, t)
+	return t
+}
+
 func (b *block) MarshalJSON() ([]byte, error) {
 	// its required to marshal lower cappital fields for json:
 	return json.Marshal(struct {
-		Nonce        int      `json:"nonce"`
-		PrevHash     [32]byte `json:"prevHash"`
-		TimeStamp    string   `json:"timeStamp"`
-		Transactions []string `json:"transactions"`
+		Nonce        int           `json:"nonce"`
+		PrevHash     [32]byte      `json:"prevHash"`
+		TimeStamp    string        `json:"timeStamp"`
+		Transactions []Transaction `json:"transactions"`
 	}{
 		Nonce:        b.nonce,
 		PrevHash:     b.prevHash,
@@ -123,10 +131,11 @@ func (b *block) MarshalJSON() ([]byte, error) {
 
 func NewBlockchain() BlockChain {
 	// only hash of empty block is stored at the beginning (using default fields):
-	genesisBlock := &block{}
+	emptyBlock := &block{}
 	bc := new(blockChain)
-	//bc.transactionPool = []string{"Genesis transaction"}
-	bc.CreateBlock(0, genesisBlock.Hash())
+	//bc.transactionPool = []string{"Genesis transaction pool"}
+	genesisBlock := bc.CreateAppendBlock(1, emptyBlock.Hash())
+	(*genesisBlock).CreateAppendTransaction("Genesis Sender", "Genesis Receiver", 0)
 	return bc
 }
 
@@ -138,10 +147,14 @@ func (bc *blockChain) Chain() []Block {
 	return bc.chain
 }
 
-func (bc *blockChain) CreateBlock(nonce int, previousHash [32]byte) Block {
+func (bc *blockChain) CreateAppendBlock(nonce int, previousHash [32]byte) *Block {
 	b := newBlock(nonce, previousHash)
 	bc.chain = append(bc.chain, b)
-	return b
+	return &b
+}
+
+func (bc *blockChain) LastBlock() Block {
+	return bc.chain[len(bc.chain)-1]
 }
 
 func (bc *blockChain) MarshalJSON() ([]byte, error) {
