@@ -65,6 +65,41 @@ These properties ensure the reliability and correctness of transactions in datab
 
 
 ---
+### Idempotency
+
+**Idempotency** is a concept in computer science and programming that **refers to the property of an operation where performing it multiple times produces the same result as performing it once**. In other words, no matter how many times you repeat the operation, the outcome remains unchanged after the first successful execution.
+
+### Key Aspects of Idempotency:
+1. **Safe Repeated Executions:**
+   - An operation is idempotent if calling it multiple times has the same effect as calling it once. This is useful when dealing with unreliable networks or systems that might retry an operation, ensuring that duplicate requests don't cause unintended side effects.
+
+2. **Common in HTTP Methods:**
+   - Some HTTP methods are defined as idempotent:
+     - **GET:** Always idempotent. Retrieving the same resource multiple times should not modify it.
+     - **PUT:** Typically idempotent. Sending the same `PUT` request multiple times updates or creates a resource with the same values.
+     - **DELETE:** Ideally idempotent. Deleting the same resource multiple times should not cause errors after the first deletion.
+     - **POST:** **Not idempotent** by definition. Sending the same `POST` request multiple times may result in the creation of multiple resources (e.g., creating a new entry in a database).
+
+3. **Practical Example:**
+   - Imagine a bank transaction where you send a request to transfer money. If the system retries the transaction due to a network failure, idempotency ensures that multiple identical requests won’t result in multiple transfers of money.
+
+### **Real-World Examples:**
+- **Database Updates:**
+  - If you send multiple identical updates to a record, idempotency ensures that the state of the database remains the same after the first update. For instance, setting a user’s email to `user@example.com` multiple times will only change it once.
+  
+- **API Design:**
+  - When designing APIs, especially in distributed systems, implementing idempotent endpoints helps avoid accidental duplication or unintended side effects. Many APIs provide an **idempotency key** (e.g., in payment processing), ensuring that multiple submissions of the same request result in only one action.
+
+### **Why Idempotency Matters:**
+- **Reliability:** It allows systems to handle failures and retries more gracefully without introducing data corruption or unintended behavior.
+- **Consistency:** It ensures that multiple identical operations result in consistent and predictable outcomes.
+- **Fault Tolerance:** In distributed systems, where messages or operations might be retried due to timeouts or network issues, idempotency guarantees that retries won’t cause inconsistencies.
+
+In summary, idempotency is a crucial property in ensuring robust, fault-tolerant, and predictable behavior in systems, especially when dealing with network communication or repeated actions.
+
+
+
+---
 # SAGA PATTERN IN DETAIL
 
 The **SAGA pattern** is a design pattern used to manage distributed transactions in a microservices architecture. It ensures that a long-running business process, which spans across multiple services, either completes successfully or rolls back gracefully, even though traditional ACID transactions are not feasible in distributed systems. It consists of a series of **compensating transactions** and can be implemented using either the **choreography** or **orchestration** approach. Here's a detailed breakdown:
