@@ -218,3 +218,10 @@ The number of members required for consensus in a blockchain network depends on 
 - In **PoS** and **BFT**, at least 2/3 of the validators must agree.
 - In **permissioned blockchains**, a **simple majority (51%)** is often sufficient.
 
+
+
+---
+# Additional information
+
+[Big O notation](./docs/README.md)
+
