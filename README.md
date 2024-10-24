@@ -221,7 +221,7 @@ The number of members required for consensus in a blockchain network depends on 
 
 
 ---
-# Additional information
+# Further Reading
 
 [Big O notation](./docs/README.md)
 
