@@ -261,4 +261,5 @@ The number of members required for consensus in a blockchain network depends on 
 - [Big O notation](./docs/bigo/README.md)
 - [Pile of Boxes](./docs/hrank/README.md)
 - [Go routines vs. OS Threads](./docs/goroutines/README.md)
+- [Design patterns summary](./docs/design/README.md)
 
