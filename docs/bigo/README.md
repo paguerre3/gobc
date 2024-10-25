@@ -1,4 +1,4 @@
-# Big o notation
+# Big o notation/interview question
 
 **Big O notation is a mathematical concept used to describe the performance or complexity of an algorithm in terms of time and space**. It provides a high-level understanding of how the runtime or memory requirements of an algorithm grow as the size of the input increases. Here’s a brief overview:
 

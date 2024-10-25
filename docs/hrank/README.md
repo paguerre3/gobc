@@ -1,4 +1,4 @@
-# "Pile of Boxes" problem. 
+# "Pile of Boxes" problem/interview question. 
 
 ### Problem Statement
 
