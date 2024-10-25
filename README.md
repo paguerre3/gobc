@@ -1,5 +1,5 @@
 # gobc
-Block chain compendium
+Block chain and Design patterns compendium
 
 # Blockchain
 
