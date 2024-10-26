@@ -29,7 +29,7 @@ func NewBlockchain() BlockChain {
 	bc := new(blockChain)
 	// add genesis transactions to blockchain Pool:
 	bc.CreateAppendTransaction(GenesisSenderAddress, GenesisRecipientAddress, 0)
-	bc.CreateAppendBlock(1, emptyBlock.Hash()) // transfer transacton "pool" from blockhain to new block and empty it
+	bc.CreateAppendBlock(0, emptyBlock.Hash()) // transfer transacton "pool" from blockhain to new block and empty it
 	return bc
 }
 
