@@ -6,34 +6,34 @@ import (
 )
 
 type Transaction interface {
-	Sender() string
-	Receiver() string
+	SenderAddress() string
+	ReceiverAddress() string
 	Amount() float64
 	TimeStamp() time.Time
 }
 
 type transaction struct {
-	sender    string
-	receiver  string
-	amount    float64
-	timeStamp time.Time
+	senderAddress   string
+	receiverAddress string
+	amount          float64
+	timeStamp       time.Time
 }
 
-func newTransaction(sender string, receiver string, amount float64) Transaction {
+func newTransaction(senderAddress string, receiverAddress string, amount float64) Transaction {
 	return &transaction{
-		sender:    sender,
-		receiver:  receiver,
-		amount:    amount,
-		timeStamp: time.Now(),
+		senderAddress:   senderAddress,
+		receiverAddress: receiverAddress,
+		amount:          amount,
+		timeStamp:       time.Now(),
 	}
 }
 
-func (t *transaction) Sender() string {
-	return t.sender
+func (t *transaction) SenderAddress() string {
+	return t.senderAddress
 }
 
-func (t *transaction) Receiver() string {
-	return t.receiver
+func (t *transaction) ReceiverAddress() string {
+	return t.receiverAddress
 }
 
 func (t *transaction) Amount() float64 {
@@ -46,14 +46,15 @@ func (t *transaction) TimeStamp() time.Time {
 
 func (t *transaction) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
-		Sender    string  `json:"sender"`
-		Receiver  string  `json:"receiver"`
-		Amount    float64 `json:"amount"`
-		TimeStamp string  `json:"timeStamp"`
+		// requirement for json to marshal lower cappital fields:
+		SenderAddress   string  `json:"senderAddress"`
+		ReceiverAddress string  `json:"receiverAddress"`
+		Amount          float64 `json:"amount"`
+		TimeStamp       string  `json:"timeStamp"`
 	}{
-		Sender:    t.Sender(),
-		Receiver:  t.Receiver(),
-		Amount:    t.Amount(),
-		TimeStamp: t.timeStamp.Format(time.RFC3339Nano),
+		SenderAddress:   t.senderAddress,
+		ReceiverAddress: t.receiverAddress,
+		Amount:          t.amount,
+		TimeStamp:       t.timeStamp.Format(time.RFC3339Nano),
 	})
 }

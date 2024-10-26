@@ -3,7 +3,7 @@ Block chain and Design patterns compendium
 
 # Blockchain
 
-![blockchain decentralized](./assets/0_blockchain_decentralized.png)
+![Blockchain decentralized](./assets/0_blockchain_decentralized.png)
 
 In a **blockchain**, a block is a digital container that holds data, such as transactions, and links to previous blocks, forming a chain. Here’s a brief explanation of key components in a block:
 
@@ -16,6 +16,14 @@ In a **blockchain**, a block is a digital container that holds data, such as tra
 4. **Transactions**: A list of transactions within the block, containing details such as sender, receiver, and the amount of cryptocurrency or data being transferred.
 
 Together, these elements secure the blockchain's immutability and transparency.
+
+### Pool of transactions
+
+**We want to move The transactions stored in the "Pool" of the Blockchain into the Transaction's section of the new/latest Block and then Empty the Pool of the Blockchain**. This action occurs during the new Block creation, **i.e. when creating a new Block the transactions of the blockchain Pool are moved into the Block and the transaction Pool is empty for futures Block**.  
+
+![Transaction pool in blockchain](./assets/1_transaction_pool.png)
+
+![Transaction pool movement in blockchain](./assets/2_transaction_pool.png)
 
 
 

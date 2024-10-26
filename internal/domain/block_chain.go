@@ -5,14 +5,16 @@ import (
 )
 
 type BlockChain interface {
-	TransactionPool() []string
+	TransactionPool() []Transaction
 	Chain() []Block
+
 	CreateAppendBlock(nonce int, previousHash [32]byte) *Block
 	LastBlock() Block
+	CreateAppendTransaction(senderAddress string, receiverAddress string, amount float64) Transaction
 }
 
 type blockChain struct {
-	transactionPool []string
+	transactionPool []Transaction
 	chain           []Block
 }
 
@@ -20,13 +22,11 @@ func NewBlockchain() BlockChain {
 	// only hash of empty block is stored at the beginning (using default fields):
 	emptyBlock := &block{}
 	bc := new(blockChain)
-	//bc.transactionPool = []string{"Genesis transaction pool"}
-	genesisBlock := bc.CreateAppendBlock(1, emptyBlock.Hash())
-	(*genesisBlock).CreateAppendTransaction("Genesis Sender", "Genesis Receiver", 0)
+	bc.CreateAppendBlock(1, emptyBlock.Hash()) // transfer transacton "pool" from blockhain to new block and empty it
 	return bc
 }
 
-func (bc *blockChain) TransactionPool() []string {
+func (bc *blockChain) TransactionPool() []Transaction {
 	return bc.transactionPool
 }
 
@@ -35,8 +35,12 @@ func (bc *blockChain) Chain() []Block {
 }
 
 func (bc *blockChain) CreateAppendBlock(nonce int, previousHash [32]byte) *Block {
-	b := newBlock(nonce, previousHash)
+	bc.CreateAppendTransaction("genesis_sender_address", "genesis_recipient_address", 0)
+	// 1. Create new block and transfer transacion pool of blockchain to the new block:
+	b := newBlock(nonce, previousHash, bc.transactionPool)
 	bc.chain = append(bc.chain, b)
+	// 2. Empty transaction pool of blockchain:
+	bc.transactionPool = []Transaction{}
 	return &b
 }
 
@@ -44,11 +48,17 @@ func (bc *blockChain) LastBlock() Block {
 	return bc.chain[len(bc.chain)-1]
 }
 
+func (bc *blockChain) CreateAppendTransaction(senderAddress string, receiverAddress string, amount float64) Transaction {
+	t := newTransaction(senderAddress, receiverAddress, amount)
+	bc.transactionPool = append(bc.transactionPool, t)
+	return t
+}
+
 func (bc *blockChain) MarshalJSON() ([]byte, error) {
 	// its required to marshal lower cappital fields for json:
 	return json.Marshal(struct {
-		TransactionPool []string `json:"transactionPool"`
-		Chain           []Block  `json:"chain"`
+		TransactionPool []Transaction `json:"transactionPool"`
+		Chain           []Block       `json:"chain"`
 	}{
 		TransactionPool: bc.transactionPool,
 		Chain:           bc.chain,

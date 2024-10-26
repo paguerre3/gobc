@@ -11,8 +11,8 @@ type Block interface {
 	PreviousHash() [32]byte
 	TimeStamp() time.Time
 	Transactions() []Transaction
+
 	Hash() [32]byte
-	CreateAppendTransaction(sender string, receiver string, amount float64) Transaction
 }
 
 type block struct {
@@ -22,12 +22,12 @@ type block struct {
 	transactions []Transaction
 }
 
-func newBlock(nonce int, previousHash [32]byte) Block {
+func newBlock(nonce int, previousHash [32]byte, transactions []Transaction) Block {
 	return &block{
-		nonce:     nonce,
-		prevHash:  previousHash,
-		timeStamp: time.Now(),
-		//transactions: transactions,
+		nonce:        nonce,
+		prevHash:     previousHash,
+		timeStamp:    time.Now(),
+		transactions: transactions,
 	}
 }
 
@@ -50,12 +50,6 @@ func (b *block) Transactions() []Transaction {
 func (b *block) Hash() [32]byte {
 	m, _ := json.Marshal(b)
 	return sha256.Sum256([]byte(m))
-}
-
-func (b *block) CreateAppendTransaction(sender string, receiver string, amount float64) Transaction {
-	t := newTransaction(sender, receiver, amount)
-	b.transactions = append(b.transactions, t)
-	return t
 }
 
 func (b *block) MarshalJSON() ([]byte, error) {
