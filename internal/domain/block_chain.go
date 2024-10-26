@@ -4,6 +4,11 @@ import (
 	"encoding/json"
 )
 
+const (
+	GenesisSenderAddress    = "genesis_sender_address"
+	GenesisRecipientAddress = "genesis_recipient_address"
+)
+
 type BlockChain interface {
 	TransactionPool() []Transaction
 	Chain() []Block
@@ -22,6 +27,8 @@ func NewBlockchain() BlockChain {
 	// only hash of empty block is stored at the beginning (using default fields):
 	emptyBlock := &block{}
 	bc := new(blockChain)
+	// add genesis transactions to blockchain Pool:
+	bc.CreateAppendTransaction(GenesisSenderAddress, GenesisRecipientAddress, 0)
 	bc.CreateAppendBlock(1, emptyBlock.Hash()) // transfer transacton "pool" from blockhain to new block and empty it
 	return bc
 }
@@ -35,7 +42,6 @@ func (bc *blockChain) Chain() []Block {
 }
 
 func (bc *blockChain) CreateAppendBlock(nonce int, previousHash [32]byte) *Block {
-	bc.CreateAppendTransaction("genesis_sender_address", "genesis_recipient_address", 0)
 	// 1. Create new block and transfer transacion pool of blockchain to the new block:
 	b := newBlock(nonce, previousHash, bc.transactionPool)
 	bc.chain = append(bc.chain, b)
