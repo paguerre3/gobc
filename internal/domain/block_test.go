@@ -10,7 +10,7 @@ import (
 func TestNewBlock(t *testing.T) {
 	nonce := 1
 	previousHash := [32]byte{}
-	transactions := []Transaction{}
+	transactions := []Transaction{newTransaction("sender", "receiver", 10.99)}
 
 	block := newBlock(nonce, previousHash, transactions)
 
@@ -18,7 +18,8 @@ func TestNewBlock(t *testing.T) {
 	assert.Equal(t, nonce, block.Nonce())
 	assert.Equal(t, previousHash, block.PreviousHash())
 	assert.NotNil(t, block.TimeStamp())
-	assert.Empty(t, block.Transactions())
+	assert.NotEmpty(t, block.Transactions())
+	assert.Equal(t, transactions, block.Transactions())
 }
 
 func TestBlockHash(t *testing.T) {
