@@ -62,7 +62,7 @@ func (b *block) MarshalJSON() ([]byte, error) {
 		Transactions []Transaction `json:"transactions"`
 	}{
 		Nonce:        b.nonce,
-		PrevHash:     hex.EncodeToString(b.prevHash[:]),
+		PrevHash:     hex.EncodeToString(b.prevHash[:]), // prevHash[:] is used to get a slice of the entire array. The [:] syntax converts an array into a slice that points to all elements of the original array. This technique is useful when you have an array and need to pass it to a function or method that expects a slice.
 		TimeStamp:    b.timeStamp.Format(time.RFC3339Nano),
 		Transactions: b.transactions,
 	})

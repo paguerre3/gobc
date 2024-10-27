@@ -28,6 +28,17 @@ Together, these elements secure the blockchain's immutability and transparency.
 
 
 ---
+## Nonce calculation and Proof of Work
+
+In a blockchain context, **Nonce and Proof of Work (PoW) are used to find a solution that meets specific criteria, like a "hash starting with a certain number of leading zeroes"**.
+
+**Nonce:** A variable that you **increment until you find a hash that meets the difficulty requirement**.
+**Proof of Work (PoW):** The **process of hashing the block data with different values of Nonce until a hash with the required number of leading zeroes is found**.
+
+![nonce and PoW](./assets/3_nonce_and_pow.png)
+
+
+---
 ## SAGA
 
 The **Saga pattern** is a design pattern **used to manage distributed transactions in microservices architectures**. In traditional monolithic systems, a single transaction could be easily managed with ACID properties (Atomicity, Consistency, Isolation, Durability). However, **in a microservices environment, where each service has its own database, it's difficult to maintain a single atomic transaction across multiple services**.
@@ -228,6 +239,8 @@ So, while blockchain and the Saga pattern are both tools for managing distribute
 
 
 ---
+# Consensus Requirements
+
 The number of members required for consensus in a blockchain network depends on the specific consensus algorithm being used. Here are **some examples of popular algorithms and their consensus requirements**:
 
 ### 1. **Proof of Work (PoW)**
