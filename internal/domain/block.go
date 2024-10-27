@@ -2,6 +2,7 @@ package domain
 
 import (
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"time"
 )
@@ -56,12 +57,12 @@ func (b *block) MarshalJSON() ([]byte, error) {
 	// its required to marshal lower cappital fields for json:
 	return json.Marshal(struct {
 		Nonce        int           `json:"nonce"`
-		PrevHash     [32]byte      `json:"prevHash"`
+		PrevHash     string        `json:"prevHash"`
 		TimeStamp    string        `json:"timeStamp"`
 		Transactions []Transaction `json:"transactions"`
 	}{
 		Nonce:        b.nonce,
-		PrevHash:     b.prevHash,
+		PrevHash:     hex.EncodeToString(b.prevHash[:]),
 		TimeStamp:    b.timeStamp.Format(time.RFC3339Nano),
 		Transactions: b.transactions,
 	})
