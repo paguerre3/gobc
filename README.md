@@ -52,6 +52,69 @@ In a blockchain context, **Nonce and Proof of Work (PoW) are used to find a solu
 In summary, **the leading zero requirement is a practical way to enforce computational difficulty, create a probabilistic proof-of-work challenge, and maintain a balanced mining rate, ensuring that new blocks are consistently added to the chain**.
 
 
+### Mining reward address
+
+[mining and reward address](./assets/4_mining_reward_address.png)
+
+The **Mining process** includes **adding one last transaction that includes the `reward` and `my_block_chain_address` for receiving the reward (including the registered `mining sender address`/server that sends the reward)** into the last Block of the chain, so if the mining is valid, i.e. my system was the 1st to provide the PoW/valid last block for the chain then the reward will be sent to my receipt address.
+
+***Example***
+```go
+func (bc *blockChain) Mining() bool {
+	// The blockChainn sender sends rewards to the blockChain address because of successfull mining:
+	bc.CreateAppendTransaction(MINING_SENDER_ADDRESS, bc.BlockChainAddress(), MINING_REWARD)
+	nonce := bc.ProofOfWork()
+	var b *Block = nil
+	if nonce > 0 {
+		previousHash := bc.LastBlock().Hash()
+		b = bc.CreateAppendBlock(nonce, previousHash)
+	}
+	return b != nil
+}
+```
+
+```json
+{
+  "transactionPool": [],
+  "chain": [
+    {
+      "nonce": 0,
+      "prevHash": "131cf374b1f3a1417306bc0f58e12803bab2f0e2c4917a5661faa764139ab952",
+      "timeStamp": "2024-10-28T19:19:42.786410824-03:00",
+      "transactions": [
+        {
+          "senderAddress": "genesis_sender_address",
+          "receiverAddress": "genesis_recipient_address",
+          "amount": 0,
+          "timeStamp": "2024-10-28T19:19:42.786301345-03:00"
+        }
+      ]
+    },
+    {
+      "nonce": 2839,
+      "prevHash": "d6c0ac9d09dbf0f76eb4f59ef86f4ce7c82adcbbeb074e90add83b59cf3d91d4",
+      "timeStamp": "2024-10-28T19:19:42.833307705-03:00",
+      "transactions": [
+        {
+          "senderAddress": "sender_address_1_flow_A",
+          "receiverAddress": "receiver_address_1_flow_A",
+          "amount": 1,
+          "timeStamp": "2024-10-28T19:19:42.786557314-03:00"
+        },
+        {
+          "senderAddress": "THE_BLOCKCHAIN_MINING_SENDER_ADDRESS",
+          "receiverAddress": "MY_BLOCKCHAIN_RECEIPT_ADDRESS_FOR_MINING_REWARD",
+          "amount": 1,
+          "timeStamp": "2024-10-28T19:19:42.786557771-03:00"
+        }
+      ]
+    }
+  ],
+  "blockChainAddress": "MY_BLOCKCHAIN_RECEIPT_ADDRESS_FOR_MINING_REWARD"
+}
+````
+
+
 
 ---
 ## SAGA

@@ -8,25 +8,28 @@ import (
 )
 
 func TestNewBlockchain(t *testing.T) {
-	bc := NewBlockchain()
+	address := MY_BLOCK_CHAIN_RECEIPT_ADDRESS
+	bc := NewBlockchain(address)
 
 	assert.NotNil(t, bc)
 	assert.Empty(t, bc.TransactionPool())
 	assert.Len(t, bc.Chain(), 1)
+	assert.Equal(t, address, bc.BlockChainAddress())
 }
 
 func TestBlockchainCreateAppendBlock(t *testing.T) {
-	bc := NewBlockchain()
+	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
 
 	block := bc.CreateAppendBlock(1, [32]byte{})
 
 	assert.NotNil(t, block)
 	assert.Len(t, bc.Chain(), 2)
 	assert.Empty(t, bc.TransactionPool())
+	assert.Equal(t, MY_BLOCK_CHAIN_RECEIPT_ADDRESS, bc.BlockChainAddress())
 }
 
 func TestBlockchainLastBlock(t *testing.T) {
-	bc := NewBlockchain()
+	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
 
 	lastBlock := bc.LastBlock()
 
@@ -34,7 +37,7 @@ func TestBlockchainLastBlock(t *testing.T) {
 }
 
 func TestBlockchainCreateAppendTransaction(t *testing.T) {
-	bc := NewBlockchain() // moves genesis transaction from transaction pool to latest block then empty transactyiomn pool
+	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS) // moves genesis transaction from transaction pool to latest block then empty transactyiomn pool
 	assert.Empty(t, bc.TransactionPool())
 	assert.Len(t, bc.Chain(), 1)
 	b := bc.Chain()[0]
@@ -46,7 +49,7 @@ func TestBlockchainCreateAppendTransaction(t *testing.T) {
 }
 
 func TestBlockchainMarshalJSON(t *testing.T) {
-	bc := NewBlockchain()
+	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
 	assert.Empty(t, bc.TransactionPool())
 
 	jsonBytes, err := json.Marshal(bc)
@@ -60,7 +63,7 @@ func TestBlockchainMarshalJSON(t *testing.T) {
 }
 
 func TestBlockchainTransactionPool(t *testing.T) {
-	bc := NewBlockchain() // moves genesis transaction from transaction pool to latest block then empty transaction pool
+	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS) // moves genesis transaction from transaction pool to latest block then empty transaction pool
 	assert.Empty(t, bc.TransactionPool())
 	assert.Len(t, bc.Chain(), 1)
 	b := bc.Chain()[0]
@@ -79,7 +82,7 @@ func TestBlockchainTransactionPool(t *testing.T) {
 }
 
 func TestBlockchainChain(t *testing.T) {
-	bc := NewBlockchain()
+	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
 
 	bc.CreateAppendBlock(1, [32]byte{})
 	bc.CreateAppendBlock(2, [32]byte{})
@@ -90,7 +93,7 @@ func TestBlockchainChain(t *testing.T) {
 }
 
 func TestIsValidProof(t *testing.T) {
-	bc := NewBlockchain()
+	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
 	previousHash := bc.LastBlock().Hash()
 	nonce := 0
 	difficulty := 2 // find only 2 leading zeros for a really fast proof:
@@ -104,9 +107,33 @@ func TestIsValidProof(t *testing.T) {
 }
 
 func TestProofOfWork(t *testing.T) {
-	bc := NewBlockchain()
+	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
 	// default difficulty level is set to "3" so the proof of work should be > 0
 	// and it'll be found relatively quickly:
 	proof := bc.ProofOfWork() // proof of work returns nonce, i.e. proof == nonce with leading zeros according tio the difficulty
 	assert.Greater(t, proof, 0)
+}
+
+func TestBlockchainMining(t *testing.T) {
+	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
+
+	// Call the Mining method
+	miningSuccess := bc.Mining()
+
+	// Verify that the mining was successful
+	assert.True(t, miningSuccess)
+
+	// Verify that a new block was created
+	assert.Len(t, bc.Chain(), 2)
+
+	// Verify that the transaction pool is empty
+	assert.Empty(t, bc.TransactionPool())
+
+	// Verify that the last block has a valid nonce
+	lastBlock := bc.LastBlock()
+	assert.Greater(t, lastBlock.Nonce(), 0)
+
+	// Verify that the last block has a valid "previous hash"
+	prevHashIndex := len(bc.Chain()) - 2
+	assert.Equal(t, bc.Chain()[prevHashIndex].Hash(), lastBlock.PreviousHash())
 }

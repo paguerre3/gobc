@@ -8,14 +8,18 @@ import (
 )
 
 const (
-	GENESSIS_SENDER_ADDRESS    = "genesis_sender_address"
-	GENESSIS_RECIPIENT_ADDRESS = "genesis_recipient_address"
-	MINING_DIFFICULTY          = 3 // increasing difficulty means more time for guessing Nonce, e.g. 4 is arround 10 minutes or more
+	GENESSIS_SENDER_ADDRESS        = "genesis_sender_address"
+	GENESSIS_RECIPIENT_ADDRESS     = "genesis_recipient_address"
+	MINING_DIFFICULTY              = 3                                      // increasing difficulty means more time for guessing Nonce, e.g. 4 is arround 10 minutes or more
+	MINING_SENDER_ADDRESS          = "THE_BLOCKCHAIN_MINING_SENDER_ADDRESS" // block chain mining server address that "sends" rewards
+	MINING_REWARD                  = 1.0
+	MY_BLOCK_CHAIN_RECEIPT_ADDRESS = "MY_BLOCKCHAIN_RECEIPT_ADDRESS_FOR_MINING_REWARD" // address for receiving mining rewards
 )
 
 type BlockChain interface {
 	TransactionPool() []Transaction
 	Chain() []Block
+	BlockChainAddress() string
 
 	CreateAppendBlock(nonce int, previousHash [32]byte) *Block
 	LastBlock() Block
@@ -23,17 +27,20 @@ type BlockChain interface {
 	CopyTransactionPool() []Transaction
 	IsValidProof(nonce int, previousHash [32]byte, transactions []Transaction, difficulty int) bool
 	ProofOfWork() int
+	Mining() bool
 }
 
 type blockChain struct {
-	transactionPool []Transaction
-	chain           []Block
+	transactionPool   []Transaction
+	chain             []Block
+	blockChainAddress string // server address registered to "receive" rewards of succesffull mining (the 1st sending the right PoW)
 }
 
-func NewBlockchain() BlockChain {
+func NewBlockchain(blockChainAddress string) BlockChain {
 	// only hash of empty block is stored at the beginning (using default fields):
 	emptyBlock := &block{}
 	bc := new(blockChain)
+	bc.blockChainAddress = blockChainAddress
 	// add genesis transactions to blockchain Pool:
 	bc.CreateAppendTransaction(GENESSIS_SENDER_ADDRESS, GENESSIS_RECIPIENT_ADDRESS, 0)
 	bc.CreateAppendBlock(0, emptyBlock.Hash()) // transfer transacton "pool" from blockhain to new block and empty it
@@ -46,6 +53,10 @@ func (bc *blockChain) TransactionPool() []Transaction {
 
 func (bc *blockChain) Chain() []Block {
 	return bc.chain
+}
+
+func (bc *blockChain) BlockChainAddress() string {
+	return bc.blockChainAddress
 }
 
 func (bc *blockChain) CreateAppendBlock(nonce int, previousHash [32]byte) *Block {
@@ -103,13 +114,27 @@ func (bc *blockChain) ProofOfWork() int {
 	return nonce
 }
 
+func (bc *blockChain) Mining() bool {
+	// The blockChainn sender sends rewards to the blockChain address because of successfull mining:
+	bc.CreateAppendTransaction(MINING_SENDER_ADDRESS, bc.BlockChainAddress(), MINING_REWARD)
+	nonce := bc.ProofOfWork()
+	var b *Block = nil
+	if nonce > 0 {
+		previousHash := bc.LastBlock().Hash()
+		b = bc.CreateAppendBlock(nonce, previousHash)
+	}
+	return b != nil
+}
+
 func (bc *blockChain) MarshalJSON() ([]byte, error) {
 	// its required to marshal lower cappital fields for json:
 	return json.Marshal(struct {
-		TransactionPool []Transaction `json:"transactionPool"`
-		Chain           []Block       `json:"chain"`
+		TransactionPool   []Transaction `json:"transactionPool"`
+		Chain             []Block       `json:"chain"`
+		BlockChainAddress string        `json:"blockChainAddress"`
 	}{
-		TransactionPool: bc.transactionPool,
-		Chain:           bc.chain,
+		TransactionPool:   bc.transactionPool,
+		Chain:             bc.chain,
+		BlockChainAddress: bc.blockChainAddress,
 	})
 }
