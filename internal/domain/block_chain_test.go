@@ -88,3 +88,17 @@ func TestBlockchainChain(t *testing.T) {
 
 	assert.Len(t, chain, 3)
 }
+
+func TestIsValidProof(t *testing.T) {
+	bc := NewBlockchain()
+	previousHash := bc.LastBlock().Hash()
+	nonce := 0
+	difficulty := 2 // find only 2 leading zeros for a really fast proof:
+	for {
+		if bc.IsValidProof(nonce, previousHash, bc.CopyTransactionPool(), difficulty) {
+			break
+		}
+		nonce++
+	}
+	assert.Greater(t, nonce, 0)
+}
