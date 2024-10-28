@@ -53,11 +53,11 @@ X-Idempotency-Key: 12345
 
 If the `X-Idempotency-Key` (`12345`) is unique for each intended payment, any retries with the same key will have no effect beyond the initial transaction. This ensures only one charge per key, making the operation idempotent.
 
-### 4. Circuit Breaker Pattern and Scaling Out/Scaling In according to the demand
+### 3. Circuit Breaker Pattern and Scaling Out/Scaling In according to the demand
 
-### 3. Service Lock: Memcache/Redis (and Pool -see "4")
+### 4. Service Lock: Memcache/Redis (and Pool -see "5")
 
-### 4. Go Pools:
+### 5. Go Pools:
 
 **A goroutine pool is a pattern used to limit and manage the number of goroutines running concurrently in a Go program.** This is particularly **useful in scenarios where a "large number" of tasks need to be executed concurrently but creating too many goroutines could lead to excessive memory usage or CPU contention.**
 
