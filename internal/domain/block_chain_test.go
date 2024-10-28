@@ -102,3 +102,11 @@ func TestIsValidProof(t *testing.T) {
 	}
 	assert.Greater(t, nonce, 0)
 }
+
+func TestProofOfWork(t *testing.T) {
+	bc := NewBlockchain()
+	// default difficulty level is set to "3" so the proof of work should be > 0
+	// and it'll be found relatively quickly:
+	proof := bc.ProofOfWork() // proof of work returns nonce, i.e. proof == nonce with leading zeros according tio the difficulty
+	assert.Greater(t, proof, 0)
+}

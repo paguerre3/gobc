@@ -22,6 +22,7 @@ type BlockChain interface {
 	CreateAppendTransaction(senderAddress string, receiverAddress string, amount float64) Transaction
 	CopyTransactionPool() []Transaction
 	IsValidProof(nonce int, previousHash [32]byte, transactions []Transaction, difficulty int) bool
+	ProofOfWork() int
 }
 
 type blockChain struct {
@@ -84,11 +85,22 @@ func (bc *blockChain) IsValidProof(nonce int, previousHash [32]byte, transaction
 	}
 	hash := guessBlock.Hash()
 	guessHashBlockStr := hex.EncodeToString(hash[:]) // OR: fmt.Sprintf("%x", hash) // %x	base 16, with lower-case letters for a-f
+	//fmt.Printf("guessHashBlockStr: %s\n", guessHashBlockStr) // uncomment to see the hash with leading zeros
 
 	// From "0 index" to "difficulty index" exclusively, i.e. it starts with "zeros" up to "difficulty" exclusively,
 	// e.g. hash starts with "000" (leading zeros).
 	// Note this is a quick way to compare hash instead to check the entire hash.
 	return guessHashBlockStr[:difficulty] == zeros
+}
+
+func (bc *blockChain) ProofOfWork() int {
+	transactions := bc.CopyTransactionPool()
+	previousHash := bc.LastBlock().Hash()
+	nonce := 0
+	for !bc.IsValidProof(nonce, previousHash, transactions, MINING_DIFFICULTY) {
+		nonce++
+	}
+	return nonce
 }
 
 func (bc *blockChain) MarshalJSON() ([]byte, error) {

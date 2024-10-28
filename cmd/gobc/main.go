@@ -22,14 +22,16 @@ func main() {
 	fmtBlockChain := newBlockChainWithFmt()
 	blockChain := fmtBlockChain()
 
-	blockChain.CreateAppendTransaction("sender_address_A", "receiver_address_A", 1.0)
+	blockChain.CreateAppendTransaction("sender_address_1_flow_A", "receiver_address_1_flow_A", 1.0)
 	previousHash := blockChain.LastBlock().Hash()
-	blockChain.CreateAppendBlock(1, previousHash)
+	nonce := blockChain.ProofOfWork()
+	blockChain.CreateAppendBlock(nonce, previousHash)
 	fmtBlockChain()
 
-	blockChain.CreateAppendTransaction("sender_address_B_1", "receiver_address_B_1", 2.5)
-	blockChain.CreateAppendTransaction("sender_address_B_2", "receiver_address_B_2", 5.0)
+	blockChain.CreateAppendTransaction("sender_address_2_flow_B", "receiver_address_2_flow_B", 2.5)
+	blockChain.CreateAppendTransaction("sender_address_3_flow_B", "receiver_address_3_flow_B", 5.0)
 	previousHash = blockChain.LastBlock().Hash()
-	blockChain.CreateAppendBlock(2, previousHash)
+	nonce = blockChain.ProofOfWork()
+	blockChain.CreateAppendBlock(nonce, previousHash)
 	fmtBlockChain()
 }
