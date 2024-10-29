@@ -154,7 +154,7 @@ In blockchain technology, **wallets**, **public and private key pairs**, and **b
    ![ECDSA](./assets/8_ECDSA.png)
 
 2. **Signing a Message**:
-   - When a user wants to sign a message or transaction, ECDSA uses the private key to create a unique **digital signature** for that specific message. This signature is unique to the message and private key, so it cannot be reused for another message.
+   - When a user wants to sign a message or transaction, ECDSA uses the private key to create a unique **digital signature** for that specific message. **⚠️ This signature is unique to the message and private key, so it cannot be reused for another message**.
 
 3. **Verifying a Signature**:
    - The receiver (or any verifier) can check the authenticity of the signature using the sender's public key and the message. If the signature is valid, it proves the message was indeed signed by the owner of the private key, without revealing the private key itself.
