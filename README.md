@@ -52,7 +52,9 @@ In a blockchain context, **Nonce and Proof of Work (PoW) are used to find a solu
 In summary, **the leading zero requirement is a practical way to enforce computational difficulty, create a probabilistic proof-of-work challenge, and maintain a balanced mining rate, ensuring that new blocks are consistently added to the chain**.
 
 
-### Mining reward address
+
+---
+## Mining reward address
 
 [mining and reward address](./assets/4_mining_reward_address.png)
 
@@ -112,7 +114,63 @@ func (bc *blockChain) Mining() bool {
   ],
   "blockChainAddress": "MY_BLOCKCHAIN_RECEIPT_ADDRESS_FOR_MINING_REWARD"
 }
-````
+```
+
+
+
+---
+## Wallets, Private and Public Keys Pairs and Blockchain 
+
+In blockchain technology, **wallets**, **public and private key pairs**, and **blockchain** itself are essential elements that enable secure and decentralized digital transactions.
+
+1. **Wallets**:
+   - Digital wallets are tools that store and manage users' cryptocurrencies. **Wallets** do not store the actual coins but instead **hold the user’s cryptographic keys**, allowing them **to access their funds and authorize transactions on the blockchain**. In other words, when creating a wallet we always need a Private and a Public key pair because the wallet only holds the cryptographic keys.
+
+2. **Public and Private Key Pairs**:
+   - Each wallet is associated with a **public key** and a **private key**.
+   - The **"public key" functions like an address** that others can see and use to send funds to the wallet, **similar to a bank account number**.
+   - The **"private key" is confidential and used to "Sign" transactions**, proving the ownership and control of the wallet. **Losing the private key typically means losing access to the funds permanently.**
+
+3. **Blockchain**:
+   - **Blockchain is a distributed ledger technology that records transactions in a secure, transparent, and immutable way (via Chained Blocks)**. **Each transaction is verified by a network of nodes (computers) before being added to a chain of blocks, making the blockchain a secure and tamper-resistant database**.
+  
+**Together, these components allow users to perform secure peer-to-peer transactions without intermediaries, forming the foundation of "decentralized" finance and other blockchain applications.**
+
+![Wallets, public and private key pairs and blockchain](./assets/5_wallet_keys_block_chain.png)
+
+![Private and Public Key Pairs](./assets/6_private_public_key_pairs.png)
+
+![Sign flow](./assets/7_wallet_keys_block_chain_sing_flow.png)
+
+### ECDSA
+
+**ECDSA** (Elliptic Curve Digital Signature Algorithm) is a cryptographic algorithm used to ensure the authenticity and integrity of messages or transactions. It's widely used in blockchain and cryptocurrency systems (like Bitcoin and Ethereum) to secure digital signatures due to its efficiency and strong security. ECDSA is based on **elliptic curve cryptography (ECC)**, which provides similar security levels to traditional cryptography but with smaller key sizes, making it faster and less resource-intensive.
+
+**How ECDSA Works:**
+
+1. **Key Generation**: 
+   - Each user generates a **public-private key pair**. The **private key** is a randomly generated number, while the **public key is derived from the private key using elliptic curve mathematics**.
+
+   ![ECDSA](./assets/8_ECDSA.png)
+
+2. **Signing a Message**:
+   - When a user wants to sign a message or transaction, ECDSA uses the private key to create a unique **digital signature** for that specific message. This signature is unique to the message and private key, so it cannot be reused for another message.
+
+3. **Verifying a Signature**:
+   - The receiver (or any verifier) can check the authenticity of the signature using the sender's public key and the message. If the signature is valid, it proves the message was indeed signed by the owner of the private key, without revealing the private key itself.
+
+**Key Advantages of ECDSA:**
+
+- **Efficient and Lightweight**: ECDSA provides high security with smaller key sizes than traditional algorithms (like RSA), making it ideal for resource-constrained environments.
+- **Widely Used in Blockchains**: Blockchains like Bitcoin and Ethereum use ECDSA to secure transactions, as it allows for secure, decentralized digital signatures and verification.
+
+***Example in Blockchain**
+
+When you send a transaction on a blockchain, ECDSA:
+- **Uses your private key to sign the transaction, creating a unique signature.**
+- **This signature, along with your public key, allows others to verify that you authorized the transaction without exposing your private key.** 
+
+This combination of security and efficiency is why ECDSA is essential in blockchain technology, where performance and data integrity are critical.
 
 
 
