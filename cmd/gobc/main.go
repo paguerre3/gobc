@@ -18,11 +18,15 @@ func newBlockChainWithFmt() func() domain.BlockChain {
 	}
 }
 
+func fmtTransactionTotal(blockChain *domain.BlockChain, senderOrReceipientAddress string) {
+	fmt.Printf("%s Transaction total: %.1f\n", senderOrReceipientAddress, (*blockChain).CalculateTransactionTotal(senderOrReceipientAddress))
+}
+
 func main() {
 	fmtBlockChain := newBlockChainWithFmt()
 	blockChain := fmtBlockChain()
 
-	blockChain.CreateAppendTransaction("sender_address_1_flow_A", "receiver_address_1_flow_A", 1.0)
+	blockChain.CreateAppendTransaction("sender_address_1", "receiver_address_1", 1.0)
 	//previousHash := blockChain.LastBlock().Hash()
 	//nonce := blockChain.ProofOfWork()
 	//blockChain.CreateAppendBlock(nonce, previousHash)
@@ -31,8 +35,8 @@ func main() {
 	blockChain.Mining()
 	fmtBlockChain()
 
-	blockChain.CreateAppendTransaction("sender_address_2_flow_B", "receiver_address_2_flow_B", 2.5)
-	blockChain.CreateAppendTransaction("sender_address_3_flow_B", "receiver_address_3_flow_B", 5.0)
+	blockChain.CreateAppendTransaction("sender_address_2", "receiver_address_2", 2.5)
+	blockChain.CreateAppendTransaction("sender_address_3", "receiver_address_2", 5.0)
 	//previousHash = blockChain.LastBlock().Hash()
 	//nonce = blockChain.ProofOfWork()
 	//blockChain.CreateAppendBlock(nonce, previousHash)
@@ -40,4 +44,11 @@ func main() {
 	// In addition, Mining adds an additional transaction to the block with the receiver address for the reward.
 	blockChain.Mining()
 	fmtBlockChain()
+
+	fmtTransactionTotal(&blockChain, "sender_address_1")
+	fmtTransactionTotal(&blockChain, "receiver_address_1")
+	fmtTransactionTotal(&blockChain, "sender_address_2")
+	fmtTransactionTotal(&blockChain, "sender_address_3")
+	fmtTransactionTotal(&blockChain, "receiver_address_2")
+	fmtTransactionTotal(&blockChain, domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
 }

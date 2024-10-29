@@ -14,7 +14,7 @@ func TestNewBlockchain(t *testing.T) {
 	assert.NotNil(t, bc)
 	assert.Empty(t, bc.TransactionPool())
 	assert.Len(t, bc.Chain(), 1)
-	assert.Equal(t, address, bc.BlockChainAddress())
+	assert.Equal(t, address, bc.BlockChainAddressOfRewardReceipient())
 }
 
 func TestBlockchainCreateAppendBlock(t *testing.T) {
@@ -25,7 +25,7 @@ func TestBlockchainCreateAppendBlock(t *testing.T) {
 	assert.NotNil(t, block)
 	assert.Len(t, bc.Chain(), 2)
 	assert.Empty(t, bc.TransactionPool())
-	assert.Equal(t, MY_BLOCK_CHAIN_RECEIPT_ADDRESS, bc.BlockChainAddress())
+	assert.Equal(t, MY_BLOCK_CHAIN_RECEIPT_ADDRESS, bc.BlockChainAddressOfRewardReceipient())
 }
 
 func TestBlockchainLastBlock(t *testing.T) {
@@ -136,4 +136,27 @@ func TestBlockchainMining(t *testing.T) {
 	// Verify that the last block has a valid "previous hash"
 	prevHashIndex := len(bc.Chain()) - 2
 	assert.Equal(t, bc.Chain()[prevHashIndex].Hash(), lastBlock.PreviousHash())
+}
+
+func TestBlockchainCalculateTransactionTotal(t *testing.T) {
+	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
+
+	// Create some transactions
+	bc.CreateAppendTransaction("sender1", "receiver1", 10.99)
+	bc.CreateAppendTransaction("sender2", "receiver2", 20.99)
+	bc.CreateAppendTransaction("sender3", "receiver1", 30.99)
+
+	assert.True(t, bc.Mining())
+
+	// Calculate the transaction total for "receiver1"
+	total := bc.CalculateTransactionTotal("receiver1")
+
+	// Verify that the total is correct
+	assert.Equal(t, 10.99+30.99, total)
+
+	// Calculate the transaction total for "sender2"
+	total = bc.CalculateTransactionTotal("sender2")
+
+	// Verify that the total is correct
+	assert.Equal(t, -20.99, total)
 }
