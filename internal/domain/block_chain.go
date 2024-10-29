@@ -19,7 +19,7 @@ const (
 type BlockChain interface {
 	TransactionPool() []Transaction
 	Chain() []Block
-	BlockChainAddressOfRewardReceipient() string
+	BlockChainAddressOfRewardRecipient() string
 
 	CreateAppendBlock(nonce int, previousHash [32]byte) *Block
 	LastBlock() Block
@@ -32,16 +32,16 @@ type BlockChain interface {
 }
 
 type blockChain struct {
-	transactionPool                     []Transaction
-	chain                               []Block
-	blockChainAddressOfRewardReceipient string // server address registered to "receive" rewards of succesffull mining (the 1st sending the right PoW)
+	transactionPool                    []Transaction
+	chain                              []Block
+	blockChainAddressOfRewardRecipient string // server address registered to "receive" rewards of succesffull mining (the 1st sending the right PoW)
 }
 
-func NewBlockchain(blockChainAddressOfRewardReceipient string) BlockChain {
+func NewBlockchain(blockChainAddressOfRewardRecipient string) BlockChain {
 	// only hash of empty block is stored at the beginning (using default fields):
 	emptyBlock := &block{}
 	bc := new(blockChain)
-	bc.blockChainAddressOfRewardReceipient = blockChainAddressOfRewardReceipient
+	bc.blockChainAddressOfRewardRecipient = blockChainAddressOfRewardRecipient
 	// add genesis transactions to blockchain Pool:
 	bc.CreateAppendTransaction(GENESSIS_SENDER_ADDRESS, GENESSIS_RECIPIENT_ADDRESS, 0)
 	bc.CreateAppendBlock(0, emptyBlock.Hash()) // transfer transacton "pool" from blockhain to new block and empty it
@@ -56,8 +56,8 @@ func (bc *blockChain) Chain() []Block {
 	return bc.chain
 }
 
-func (bc *blockChain) BlockChainAddressOfRewardReceipient() string {
-	return bc.blockChainAddressOfRewardReceipient
+func (bc *blockChain) BlockChainAddressOfRewardRecipient() string {
+	return bc.blockChainAddressOfRewardRecipient
 }
 
 func (bc *blockChain) CreateAppendBlock(nonce int, previousHash [32]byte) *Block {
@@ -117,7 +117,7 @@ func (bc *blockChain) ProofOfWork() int {
 
 func (bc *blockChain) Mining() bool {
 	// The blockChainn sender sends rewards to the blockChain address because of successfull mining:
-	bc.CreateAppendTransaction(MINING_SENDER_ADDRESS, bc.BlockChainAddressOfRewardReceipient(), MINING_REWARD)
+	bc.CreateAppendTransaction(MINING_SENDER_ADDRESS, bc.BlockChainAddressOfRewardRecipient(), MINING_REWARD)
 	nonce := bc.ProofOfWork()
 	var b *Block = nil
 	if nonce > 0 {
@@ -145,12 +145,12 @@ func (bc *blockChain) CalculateTransactionTotal(blockChainAddressOfReceipientOrS
 func (bc *blockChain) MarshalJSON() ([]byte, error) {
 	// its required to marshal lower cappital fields for json:
 	return json.Marshal(struct {
-		TransactionPool                     []Transaction `json:"transactionPool"`
-		Chain                               []Block       `json:"chain"`
-		BlockChainAddressOfRewardReceipient string        `json:"blockChainAddressOfRewardReceipient"`
+		TransactionPool                    []Transaction `json:"transactionPool"`
+		Chain                              []Block       `json:"chain"`
+		BlockChainAddressOfRewardRecipient string        `json:"blockChainAddressOfRewardReceipient"`
 	}{
-		TransactionPool:                     bc.transactionPool,
-		Chain:                               bc.chain,
-		BlockChainAddressOfRewardReceipient: bc.blockChainAddressOfRewardReceipient,
+		TransactionPool:                    bc.transactionPool,
+		Chain:                              bc.chain,
+		BlockChainAddressOfRewardRecipient: bc.blockChainAddressOfRewardRecipient,
 	})
 }

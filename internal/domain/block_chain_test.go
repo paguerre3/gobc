@@ -14,7 +14,7 @@ func TestNewBlockchain(t *testing.T) {
 	assert.NotNil(t, bc)
 	assert.Empty(t, bc.TransactionPool())
 	assert.Len(t, bc.Chain(), 1)
-	assert.Equal(t, address, bc.BlockChainAddressOfRewardReceipient())
+	assert.Equal(t, address, bc.BlockChainAddressOfRewardRecipient())
 }
 
 func TestBlockchainCreateAppendBlock(t *testing.T) {
@@ -25,7 +25,7 @@ func TestBlockchainCreateAppendBlock(t *testing.T) {
 	assert.NotNil(t, block)
 	assert.Len(t, bc.Chain(), 2)
 	assert.Empty(t, bc.TransactionPool())
-	assert.Equal(t, MY_BLOCK_CHAIN_RECEIPT_ADDRESS, bc.BlockChainAddressOfRewardReceipient())
+	assert.Equal(t, MY_BLOCK_CHAIN_RECEIPT_ADDRESS, bc.BlockChainAddressOfRewardRecipient())
 }
 
 func TestBlockchainLastBlock(t *testing.T) {
