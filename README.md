@@ -124,7 +124,7 @@ func (bc *blockChain) Mining() bool {
 In blockchain technology, **wallets**, **public and private key pairs**, and **blockchain** itself are essential elements that enable secure and decentralized digital transactions.
 
 1. **Wallets**:
-   - Digital wallets are tools that store and manage users' cryptocurrencies. **Wallets** do not store the actual coins but instead **hold the user’s cryptographic keys**, allowing them **to access their funds and authorize transactions on the blockchain**. In other words, when creating a wallet we always need a Private and a Public key pair because the wallet only holds the cryptographic keys.
+   - Digital wallets are tools that store and manage users' cryptocurrencies. **Wallets do Not store the actual coins but instead hold the user’s "cryptographic keys"**, allowing them **to access their funds and authorize transactions on the blockchain**. In other words, when creating a wallet we always need a Private and a Public key pair because the wallet only holds the cryptographic keys.
 
 2. **Public and Private Key Pairs**:
    - Each wallet is associated with a **public key** and a **private key**.
