@@ -164,7 +164,7 @@ In blockchain technology, **wallets**, **public and private key pairs**, and **b
 - **Efficient and Lightweight**: ECDSA provides high security with smaller key sizes than traditional algorithms (like RSA), making it ideal for resource-constrained environments.
 - **Widely Used in Blockchains**: Blockchains like Bitcoin and Ethereum use ECDSA to secure transactions, as it allows for secure, decentralized digital signatures and verification.
 
-***Example in Blockchain**
+***Example in Blockchain***
 
 When you send a transaction on a blockchain, ECDSA:
 - **Uses your private key to sign the transaction, creating a unique signature.**
