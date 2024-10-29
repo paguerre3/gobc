@@ -56,7 +56,7 @@ In summary, **the leading zero requirement is a practical way to enforce computa
 ---
 ## Mining reward address
 
-[mining and reward address](./assets/4_mining_reward_address.png)
+![mining and reward address](./assets/4_mining_reward_address.png)
 
 The **Mining process** includes **adding one last transaction that includes the `reward` and `my_block_chain_address` for receiving the reward (including the registered `mining sender address`/server that sends the reward)** into the last Block of the chain, so if the mining is valid, i.e. my system was the 1st to provide the PoW/valid last block for the chain then the reward will be sent to my receipt address.
 
