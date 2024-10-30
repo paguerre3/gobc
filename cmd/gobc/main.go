@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/paguerre3/blockchain/internal/domain"
+	"github.com/paguerre3/blockchain/internal/block_chain/domain"
 )
 
 func newBlockChainWithFmt() func() domain.BlockChain {
