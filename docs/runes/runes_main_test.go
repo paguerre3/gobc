@@ -3,6 +3,8 @@ package runes
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 /*
@@ -60,5 +62,8 @@ func CaesarCipher(s string, n int) (string, error) {
 }
 
 func Test_Runes_Excersise(t *testing.T) {
-	fmt.Println(CaesarCipher("uno-square *es* %una gran empresa.", 3))
+	c, _ := CaesarCipher("uno-square *es* %una gran empresa.", 3)
+	fmt.Println(c)
+
+	assert.Equal(t, "xqr-vtxduh *hv* %xqd judq hpsuhvd.", c)
 }
