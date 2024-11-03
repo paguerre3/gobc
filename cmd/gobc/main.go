@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/paguerre3/blockchain/internal/block_chain/domain"
+	wdomain "github.com/paguerre3/blockchain/internal/wallet/domain"
 )
 
 func newBlockChainWithFmt() func() domain.BlockChain {
@@ -20,6 +21,16 @@ func newBlockChainWithFmt() func() domain.BlockChain {
 
 func fmtTransactionTotal(blockChain *domain.BlockChain, senderOrReceipientAddress string) {
 	fmt.Printf("%s Transaction total: %.1f\n", senderOrReceipientAddress, (*blockChain).CalculateTransactionTotal(senderOrReceipientAddress))
+}
+
+func newWalletWithfmt() func() wdomain.Wallet {
+	w := wdomain.NewWallet()
+	return func() wdomain.Wallet {
+		fmt.Println(strings.Repeat("*", 75))
+		json, _ := json.MarshalIndent(w, "", "  ")
+		fmt.Println(string(json))
+		return w
+	}
 }
 
 func main() {
@@ -51,4 +62,7 @@ func main() {
 	fmtTransactionTotal(&blockChain, "sender_address_3")
 	fmtTransactionTotal(&blockChain, "receiver_address_2")
 	fmtTransactionTotal(&blockChain, domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
+
+	fmtWallet := newWalletWithfmt()
+	fmtWallet()
 }
