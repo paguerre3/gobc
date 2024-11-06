@@ -179,20 +179,28 @@ This combination of security and efficiency is why ECDSA is essential in blockch
 **The goal is to create a secure hash not so long for the address, so it reduces the amount of data provided associated addresses.** Using ECDSA directly for encrypting the address generates a really long hash, and **it's required to perform RIPEMD-160 hashing plus other steps like encoding to base58 to mate a shorter address**, here are the steps: 
 
 **1. Create ECDSA private key (32 bytes), public key (64 bytes)**
+
 **2. Perform SHA-256 hashing on the public key (32 bytes)**
+
 **3. Perform RIPEMD-160 hashing on the resulting SHA-256 hash (20 bytes)**
+
 **4. Add version byte in front of RIPEMD-160 hash (1 byte: 0x00 Main Network)**
+
 **5. Perform SHA-256 hashing on the extended RIPEMD-160 hash result (20 bytes)**
+
 **6. Perform SHA-256 hashing on the resulting SHA-256 hash (32 bytes: 2nd SHA)**
+
 **7. Take the first "4 bytes" of the second SHA-256 hash for checksum (4 bytes)**
+
 **8. Add the 4 checksum bytes from 7 at the end of the extended RIPEMD-160 hash from 4 (25 bytes)**
+
 **9. Convert the result from a byte string into base58**
 
 ![Blockchain address process](./assets/9_blockchain_address.png)
 
 [Technical background of version 1 Bitcoin addresses](https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses)
 
-![Technical background of version 1 Bitcoin addresses design](https://en.bitcoin.it/wiki/File:PubKeyToAddr.png)
+![Technical background of version 1 Bitcoin addresses design](https://en.bitcoin.it/wiki/File:PubKeyToAddr.png#file)
 
 
 
