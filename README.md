@@ -200,7 +200,11 @@ This combination of security and efficiency is why ECDSA is essential in blockch
 
 [Technical background of version 1 Bitcoin addresses](https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses)
 
-![Technical background of version 1 Bitcoin addresses design](https://en.bitcoin.it/wiki/File:PubKeyToAddr.png#file)
+Add necessary dependencies into go module for handling the blockchain address:
+```bash
+go get golang.org/x/crypto/ripemd160
+go get github.com/btcsuite/btcutil/base58
+```
 
 
 
