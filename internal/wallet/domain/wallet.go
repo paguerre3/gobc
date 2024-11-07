@@ -24,16 +24,16 @@ type wallet struct {
 	blockChainAddress string
 }
 
-func NewWallet() Wallet {
+func generateKeys() (*ecdsa.PrivateKey, error) {
 	// 1. Create ECDSA private key (32 bytes), public key (64 bytes)
-	pk, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	if err != nil {
-		panic(err)
-	}
+	return ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+}
+
+func createBlockChainAddress(privateKey *ecdsa.PrivateKey) string {
 	// 2. Perform SHA-256 hashing on the public key (32 bytes)
 	h2 := sha256.New()
-	h2.Write(pk.PublicKey.X.Bytes())
-	h2.Write(pk.PublicKey.Y.Bytes())
+	h2.Write(privateKey.PublicKey.X.Bytes())
+	h2.Write(privateKey.PublicKey.Y.Bytes())
 	digest2 := h2.Sum(nil)
 	// 3. Perform RIPEMD-160 hashing on the resulting SHA-256 hash (20 bytes)
 	h3 := ripemd160.New()
@@ -58,7 +58,15 @@ func NewWallet() Wallet {
 	copy(dc8[:21], vd4[:])
 	copy(dc8[21:], chsum[:])
 	//9. Convert the result from a byte string into base58
-	address := base58.Encode(dc8)
+	return base58.Encode(dc8)
+}
+
+func NewWallet() Wallet {
+	pk, err := generateKeys()
+	if err != nil {
+		panic(err)
+	}
+	address := createBlockChainAddress(pk)
 	return &wallet{
 		privateKey: pk,
 		// publicKey is a part of the private key
