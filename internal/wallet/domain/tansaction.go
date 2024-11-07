@@ -2,8 +2,9 @@ package domain
 
 import (
 	"crypto/ecdsa"
+	"crypto/rand"
+	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"time"
 )
 
@@ -14,6 +15,8 @@ type Transaction interface {
 	RecipientAddress() string
 	Amount() float64
 	TimeStamp() time.Time
+
+	GenerateSignature() (Signature, error)
 }
 
 type transaction struct {
@@ -60,18 +63,31 @@ func (t *transaction) TimeStamp() time.Time {
 	return t.timeStamp
 }
 
+func (t *transaction) GenerateSignature() (Signature, error) {
+	m, err := json.Marshal(t)
+	if err != nil {
+		return nil, err
+	}
+	// hash
+	h := sha256.Sum256([]byte(m))
+	// sign hash of json
+	r, s, err := ecdsa.Sign(rand.Reader, t.senderPrivateKey, h[:])
+	return newSignature(r, s), err
+}
+
 func (t *transaction) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		// requirement for json to marshal lower cappital fields:
-		SenderPrivateKey string  `json:"senderPrivateKey"`
-		SenderPublicKey  string  `json:"senderPublicKey"`
+		//SenderPrivateKey string  `json:"senderPrivateKey"`
+		//SenderPublicKey  string  `json:"senderPublicKey"`
 		SenderAddress    string  `json:"senderAddress"`
 		RecipientAddress string  `json:"recipientAddress"`
 		Amount           float64 `json:"amount"`
 		TimeStamp        string  `json:"timeStamp"`
 	}{
-		SenderPrivateKey: fmt.Sprintf("%x", t.senderPrivateKey.D.Bytes()), // hex.EncodeToString(hash[:]) OR: fmt.Sprintf("%x", hash) // %x	base 16, with lower-case letters for a-f
-		SenderPublicKey:  fmt.Sprintf("%x%x", t.senderPublicKey.X.Bytes(), t.senderPublicKey.Y.Bytes()),
+		//Avoid using keys as they will be used by the signature of the transaction:
+		//SenderPrivateKey: fmt.Sprintf("%x", t.senderPrivateKey.D.Bytes()), // hex.EncodeToString(hash[:]) OR: fmt.Sprintf("%x", hash) // %x	base 16, with lower-case letters for a-f
+		//SenderPublicKey:  fmt.Sprintf("%x%x", t.senderPublicKey.X.Bytes(), t.senderPublicKey.Y.Bytes()),
 		SenderAddress:    t.senderAddress,
 		RecipientAddress: t.recipientAddress,
 		Amount:           t.amount,
