@@ -33,6 +33,12 @@ func newWalletWithfmt() func() wdomain.Wallet {
 	}
 }
 
+func fmtTransactionSignature(transation *wdomain.Transaction) wdomain.Signature {
+	signature, _ := (*transation).GenerateSignature()
+	fmt.Printf("Transaction Signature: %s\n", signature) // it uses signature.String()
+	return signature
+}
+
 func main() {
 	fmtBlockChain := newBlockChainWithFmt()
 	blockChain := fmtBlockChain()
@@ -64,5 +70,7 @@ func main() {
 	fmtTransactionTotal(&blockChain, domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
 
 	fmtWallet := newWalletWithfmt()
-	fmtWallet()
+	wallet := fmtWallet()
+	tx := wdomain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "recipient_address_1", 1.0)
+	fmtTransactionSignature(&tx)
 }
