@@ -16,7 +16,7 @@ func TestNewTransaction(t *testing.T) {
 
 	assert.NotNil(t, tx)
 	assert.Equal(t, senderAddress, tx.SenderAddress())
-	assert.Equal(t, receiverAddress, tx.ReceiverAddress())
+	assert.Equal(t, receiverAddress, tx.RecipientAddress())
 	assert.Equal(t, amount, tx.Amount())
 	assert.NotNil(t, tx.TimeStamp())
 }
@@ -31,7 +31,7 @@ func TestTransactionMarshalJSON(t *testing.T) {
 	err = json.Unmarshal(jsonBytes, &jsonMap)
 	assert.NoError(t, err)
 
-	expectedKeys := []string{"senderAddress", "receiverAddress", "amount", "timeStamp"}
+	expectedKeys := []string{"senderAddress", "recipientAddress", "amount", "timeStamp"}
 	for _, key := range expectedKeys {
 		assert.Contains(t, jsonMap, key)
 	}

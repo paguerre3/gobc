@@ -1,4 +1,4 @@
-package domain
+package common
 
 import (
 	"encoding/json"
@@ -15,7 +15,7 @@ type signature struct {
 	r, s *big.Int
 }
 
-func newSignature(r, s *big.Int) Signature {
+func NewSignature(r, s *big.Int) Signature {
 	return &signature{r: r, s: s}
 }
 

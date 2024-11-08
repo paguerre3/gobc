@@ -7,24 +7,24 @@ import (
 
 type Transaction interface {
 	SenderAddress() string
-	ReceiverAddress() string
+	RecipientAddress() string
 	Amount() float64
 	TimeStamp() time.Time
 }
 
 type transaction struct {
-	senderAddress   string
-	receiverAddress string
-	amount          float64
-	timeStamp       time.Time
+	senderAddress    string
+	recipientAddress string
+	amount           float64
+	timeStamp        time.Time
 }
 
-func newTransaction(senderAddress string, receiverAddress string, amount float64) Transaction {
+func newTransaction(senderAddress string, receipientAddress string, amount float64) Transaction {
 	return &transaction{
-		senderAddress:   senderAddress,
-		receiverAddress: receiverAddress,
-		amount:          amount,
-		timeStamp:       time.Now(),
+		senderAddress:    senderAddress,
+		recipientAddress: receipientAddress,
+		amount:           amount,
+		timeStamp:        time.Now(),
 	}
 }
 
@@ -32,8 +32,8 @@ func (t *transaction) SenderAddress() string {
 	return t.senderAddress
 }
 
-func (t *transaction) ReceiverAddress() string {
-	return t.receiverAddress
+func (t *transaction) RecipientAddress() string {
+	return t.recipientAddress
 }
 
 func (t *transaction) Amount() float64 {
@@ -47,14 +47,14 @@ func (t *transaction) TimeStamp() time.Time {
 func (t *transaction) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		// requirement for json to marshal lower cappital fields:
-		SenderAddress   string  `json:"senderAddress"`
-		ReceiverAddress string  `json:"receiverAddress"`
-		Amount          float64 `json:"amount"`
-		TimeStamp       string  `json:"timeStamp"`
+		SenderAddress    string  `json:"senderAddress"`
+		RecipientAddress string  `json:"recipientAddress"`
+		Amount           float64 `json:"amount"`
+		TimeStamp        string  `json:"timeStamp"`
 	}{
-		SenderAddress:   t.senderAddress,
-		ReceiverAddress: t.receiverAddress,
-		Amount:          t.amount,
-		TimeStamp:       t.timeStamp.Format(time.RFC3339Nano),
+		SenderAddress:    t.senderAddress,
+		RecipientAddress: t.recipientAddress,
+		Amount:           t.amount,
+		TimeStamp:        t.timeStamp.Format(time.RFC3339Nano),
 	})
 }

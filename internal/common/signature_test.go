@@ -1,4 +1,4 @@
-package domain
+package common
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 )
 
 func TestSignatureMarshalJSON(t *testing.T) {
-	s := newSignature(big.NewInt(1), big.NewInt(2))
+	s := NewSignature(big.NewInt(1), big.NewInt(2))
 	jsonBytes, err := json.Marshal(s)
 	assert.NoError(t, err)
 	var jsonMap map[string]interface{}
@@ -20,7 +20,7 @@ func TestSignatureMarshalJSON(t *testing.T) {
 }
 
 func TestSignatureUnmarshalJSON(t *testing.T) {
-	s := newSignature(big.NewInt(1), big.NewInt(2))
+	s := NewSignature(big.NewInt(1), big.NewInt(2))
 	jsonBytes, err := json.Marshal(s)
 	assert.NoError(t, err)
 	var jsonMap map[string]interface{}

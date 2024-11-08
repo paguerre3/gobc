@@ -70,7 +70,7 @@ func TestBlockchainTransactionPool(t *testing.T) {
 	assert.Len(t, b.Transactions(), 1)
 	tx := b.Transactions()[0]
 	assert.Equal(t, GENESSIS_SENDER_ADDRESS, tx.SenderAddress())
-	assert.Equal(t, GENESSIS_RECIPIENT_ADDRESS, tx.ReceiverAddress())
+	assert.Equal(t, GENESSIS_RECIPIENT_ADDRESS, tx.RecipientAddress())
 
 	// create 2 new transactions in blockchain pool after it was empty (for a future block):
 	t1 := bc.CreateAppendTransaction("sender1", "receiver1", 10.99)

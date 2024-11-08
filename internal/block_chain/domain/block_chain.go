@@ -1,10 +1,14 @@
 package domain
 
 import (
+	"crypto/ecdsa"
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"strings"
 	"time"
+
+	"github.com/paguerre3/blockchain/internal/common"
 )
 
 const (
@@ -29,6 +33,8 @@ type BlockChain interface {
 	ProofOfWork() int
 	Mining() bool
 	CalculateTransactionTotal(blockChainAddressOfReceipientOrSender string) float64
+
+	VerifyTransactionSignature(senderPublicKey *ecdsa.PublicKey, signature common.Signature, transaction Transaction) bool
 }
 
 type blockChain struct {
@@ -82,7 +88,7 @@ func (bc *blockChain) CreateAppendTransaction(senderAddress string, receiverAddr
 func (bc *blockChain) CopyTransactionPool() []Transaction {
 	clonedTransactions := make([]Transaction, len(bc.TransactionPool()))
 	for i, t := range bc.TransactionPool() {
-		clonedTransactions[i] = newTransaction(t.SenderAddress(), t.ReceiverAddress(), t.Amount())
+		clonedTransactions[i] = newTransaction(t.SenderAddress(), t.RecipientAddress(), t.Amount())
 	}
 	return clonedTransactions
 }
@@ -127,14 +133,14 @@ func (bc *blockChain) Mining() bool {
 	return b != nil
 }
 
-func (bc *blockChain) CalculateTransactionTotal(blockChainAddressOfReceipientOrSender string) float64 {
+func (bc *blockChain) CalculateTransactionTotal(blockChainAddressOfRecipientOrSender string) float64 {
 	var total float64 = 0
 	for _, b := range bc.Chain() { // iterates the entire block chain
 		for _, t := range b.Transactions() {
-			if t.SenderAddress() == blockChainAddressOfReceipientOrSender {
+			if t.SenderAddress() == blockChainAddressOfRecipientOrSender {
 				total -= t.Amount()
 			}
-			if t.ReceiverAddress() == blockChainAddressOfReceipientOrSender {
+			if t.RecipientAddress() == blockChainAddressOfRecipientOrSender {
 				total += t.Amount()
 			}
 		}
@@ -142,12 +148,21 @@ func (bc *blockChain) CalculateTransactionTotal(blockChainAddressOfReceipientOrS
 	return total
 }
 
+func (bc *blockChain) VerifyTransactionSignature(senderPublicKey *ecdsa.PublicKey, signature common.Signature, transaction Transaction) bool {
+	m, err := json.Marshal(transaction)
+	if err != nil {
+		return false
+	}
+	hash := sha256.Sum256([]byte(m))
+	return ecdsa.Verify(senderPublicKey, hash[:], signature.R(), signature.S())
+}
+
 func (bc *blockChain) MarshalJSON() ([]byte, error) {
 	// its required to marshal lower cappital fields for json:
 	return json.Marshal(struct {
 		TransactionPool                    []Transaction `json:"transactionPool"`
 		Chain                              []Block       `json:"chain"`
-		BlockChainAddressOfRewardRecipient string        `json:"blockChainAddressOfRewardReceipient"`
+		BlockChainAddressOfRewardRecipient string        `json:"blockChainAddressOfRewardRecipient"`
 	}{
 		TransactionPool:                    bc.transactionPool,
 		Chain:                              bc.chain,

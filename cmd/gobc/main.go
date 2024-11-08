@@ -6,7 +6,8 @@ import (
 	"strings"
 
 	"github.com/paguerre3/blockchain/internal/block_chain/domain"
-	wdomain "github.com/paguerre3/blockchain/internal/wallet/domain"
+	"github.com/paguerre3/blockchain/internal/common"
+	walletd "github.com/paguerre3/blockchain/internal/wallet/domain"
 )
 
 func newBlockChainWithFmt() func() domain.BlockChain {
@@ -23,9 +24,9 @@ func fmtTransactionTotal(blockChain *domain.BlockChain, senderOrReceipientAddres
 	fmt.Printf("%s Transaction total: %.1f\n", senderOrReceipientAddress, (*blockChain).CalculateTransactionTotal(senderOrReceipientAddress))
 }
 
-func newWalletWithfmt() func() wdomain.Wallet {
-	w := wdomain.NewWallet()
-	return func() wdomain.Wallet {
+func newWalletWithfmt() func() walletd.Wallet {
+	w := walletd.NewWallet()
+	return func() walletd.Wallet {
 		fmt.Println(strings.Repeat("*", 75))
 		json, _ := json.MarshalIndent(w, "", "  ")
 		fmt.Println(string(json))
@@ -33,7 +34,7 @@ func newWalletWithfmt() func() wdomain.Wallet {
 	}
 }
 
-func fmtTransactionSignature(transation *wdomain.Transaction) wdomain.Signature {
+func fmtTransactionSignature(transation *walletd.Transaction) common.Signature {
 	signature, _ := (*transation).GenerateSignature()
 	fmt.Printf("Transaction Signature: %s\n", signature) // it uses signature.String()
 	return signature
@@ -71,6 +72,6 @@ func main() {
 
 	fmtWallet := newWalletWithfmt()
 	wallet := fmtWallet()
-	tx := wdomain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "recipient_address_1", 1.0)
+	tx := walletd.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "recipient_address_1", 1.0)
 	fmtTransactionSignature(&tx)
 }
