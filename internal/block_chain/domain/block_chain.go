@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 
@@ -27,7 +28,8 @@ type BlockChain interface {
 
 	CreateAppendBlock(nonce int, previousHash [32]byte) *Block
 	LastBlock() Block
-	CreateAppendTransaction(senderAddress string, receiverAddress string, amount float64) Transaction
+	CreateAppendTransaction(senderAddress string, receiverAddress string, amount float64,
+		senderPublicKey *ecdsa.PublicKey, signature common.Signature) (Transaction, error)
 	CopyTransactionPool() []Transaction
 	IsValidProof(nonce int, previousHash [32]byte, transactions []Transaction, difficulty int) bool
 	ProofOfWork() int
@@ -48,8 +50,9 @@ func NewBlockchain(blockChainAddressOfRewardRecipient string) BlockChain {
 	emptyBlock := &block{}
 	bc := new(blockChain)
 	bc.blockChainAddressOfRewardRecipient = blockChainAddressOfRewardRecipient
-	// add genesis transactions to blockchain Pool:
-	bc.CreateAppendTransaction(GENESSIS_SENDER_ADDRESS, GENESSIS_RECIPIENT_ADDRESS, 0)
+	// add genesis transactions to blockchain Pool
+	// (the is no need of passing public key and signature for the genesis transaction scenario):
+	bc.CreateAppendTransaction(GENESSIS_SENDER_ADDRESS, GENESSIS_RECIPIENT_ADDRESS, 0, nil, nil)
 	bc.CreateAppendBlock(0, emptyBlock.Hash()) // transfer transacton "pool" from blockhain to new block and empty it
 	return bc
 }
@@ -79,10 +82,20 @@ func (bc *blockChain) LastBlock() Block {
 	return bc.chain[len(bc.chain)-1]
 }
 
-func (bc *blockChain) CreateAppendTransaction(senderAddress string, receiverAddress string, amount float64) Transaction {
-	t := newTransaction(senderAddress, receiverAddress, amount)
-	bc.transactionPool = append(bc.transactionPool, t)
-	return t
+func (bc *blockChain) CreateAppendTransaction(senderAddress string, recipientAddress string, amount float64,
+	senderPublicKey *ecdsa.PublicKey, signature common.Signature) (Transaction, error) {
+	t := newTransaction(senderAddress, recipientAddress, amount)
+	if senderAddress == MINING_SENDER_ADDRESS || senderAddress == GENESSIS_SENDER_ADDRESS {
+		// this is a transaction for reward so there is no need to verify the signature
+		// (also, there is no need to verify a genesis transaction case)
+		bc.transactionPool = append(bc.transactionPool, t)
+		return t, nil
+	}
+	if bc.VerifyTransactionSignature(senderPublicKey, signature, t) {
+		bc.transactionPool = append(bc.transactionPool, t)
+		return t, nil
+	}
+	return nil, fmt.Errorf("invalid signature")
 }
 
 func (bc *blockChain) CopyTransactionPool() []Transaction {
@@ -122,8 +135,9 @@ func (bc *blockChain) ProofOfWork() int {
 }
 
 func (bc *blockChain) Mining() bool {
-	// The blockChainn sender sends rewards to the blockChain address because of successfull mining:
-	bc.CreateAppendTransaction(MINING_SENDER_ADDRESS, bc.BlockChainAddressOfRewardRecipient(), MINING_REWARD)
+	// The blockChainn sender sends rewards to the blockChain address because of successfull mining
+	// (no nee to pass public key and signature for "rewards" scenario):
+	bc.CreateAppendTransaction(MINING_SENDER_ADDRESS, bc.BlockChainAddressOfRewardRecipient(), MINING_REWARD, nil, nil)
 	nonce := bc.ProofOfWork()
 	var b *Block = nil
 	if nonce > 0 {
