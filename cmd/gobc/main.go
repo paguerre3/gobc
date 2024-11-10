@@ -41,18 +41,6 @@ func fmtTransactionSignature(transation *walletd.Transaction) common.Signature {
 }
 
 func main() {
-	fmtBlockChain := newBlockChainWithFmt()
-	blockChain := fmtBlockChain()
-
-	blockChain.CreateAppendTransaction("sender_address_1", "receiver_address_1", 1.0)
-	//previousHash := blockChain.LastBlock().Hash()
-	//nonce := blockChain.ProofOfWork()
-	//blockChain.CreateAppendBlock(nonce, previousHash)
-	// Mining already covers calculating the nonce/PoW and creating the Block with previous Hash (previous 3 sentences).
-	// In addition, Mining adds an additional transaction to the block with the receiver address for the reward.
-	blockChain.Mining()
-	fmtBlockChain()
-
 	blockChain.CreateAppendTransaction("sender_address_2", "receiver_address_2", 2.5)
 	blockChain.CreateAppendTransaction("sender_address_3", "receiver_address_2", 5.0)
 	//previousHash = blockChain.LastBlock().Hash()
@@ -70,8 +58,31 @@ func main() {
 	fmtTransactionTotal(&blockChain, "receiver_address_2")
 	fmtTransactionTotal(&blockChain, domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
 
-	fmtWallet := newWalletWithfmt()
-	wallet := fmtWallet()
-	tx := walletd.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "recipient_address_1", 1.0)
-	fmtTransactionSignature(&tx)
+	// Wallets:
+	fmtWalletA := newWalletWithfmt()
+	fmtWalletB := newWalletWithfmt()
+	fmtWalletC := newWalletWithfmt()
+	walletA := fmtWalletA()
+	walletB := fmtWalletB()
+	walletC := fmtWalletC()
+
+	// Wallet A address is Sender and Wallet B address is Recipient.
+	tx1 := walletd.NewTransaction(walletA.PrivateKey(), walletA.BlockChainAddress(), walletB.BlockChainAddress(), 1.0)
+	signature1 := fmtTransactionSignature(&tx1)
+
+	// Blockchain:
+	fmtBlockChain := newBlockChainWithFmt()
+	blockChain := fmtBlockChain()
+	_, err := blockChain.CreateAppendTransaction(walletA.BlockChainAddress(), walletB.BlockChainAddress(), tx1.Amount(), walletA.PublicKey(), signature1)
+	if err != nil {
+		panic(err)
+	}
+	//previousHash := blockChain.LastBlock().Hash()
+	//nonce := blockChain.ProofOfWork()
+	//blockChain.CreateAppendBlock(nonce, previousHash)
+	// Mining already covers calculating the nonce/PoW and creating the Block with previous Hash (previous 3 sentences).
+	// In addition, Mining adds an additional transaction to the block with the receiver address for the reward.
+	blockChain.Mining()
+	fmtBlockChain()
+
 }
