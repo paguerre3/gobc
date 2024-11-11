@@ -92,6 +92,13 @@ func (bc *blockChain) CreateAppendTransaction(senderAddress string, recipientAdd
 		return t, nil
 	}
 	if bc.VerifyTransactionSignature(senderPublicKey, signature, t) {
+
+		// Real case scenario, a wallet needs to have funds for sending cryptos
+		// received via Mining rewards or transactions from other wallets before sending criptos!
+		// WIP: code commented for now.
+		//if bc.CalculateTransactionTotal(senderAddress) < amount {
+		//	return nil, fmt.Errorf("insufficient funds")
+		//}
 		bc.transactionPool = append(bc.transactionPool, t)
 		return t, nil
 	}
