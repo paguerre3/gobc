@@ -2,8 +2,10 @@ package domain
 
 import (
 	"encoding/json"
+	"math/big"
 	"testing"
 
+	"github.com/paguerre3/blockchain/internal/common"
 	wallet_domain "github.com/paguerre3/blockchain/internal/wallet/domain"
 	"github.com/stretchr/testify/assert"
 )
@@ -47,11 +49,11 @@ func TestBlockchainCreateAppendTransaction(t *testing.T) {
 	wallet := wallet_domain.NewWallet()
 	wtx := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver", 10.99)
 	signature, err := wtx.GenerateSignature()
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 
 	transaction, err := bc.CreateAppendTransaction(wallet.BlockChainAddress(), "receiver", 10.99, wallet.PublicKey(), signature)
 	assert.NotNil(t, transaction)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Len(t, bc.TransactionPool(), 1)
 }
 
@@ -82,16 +84,16 @@ func TestBlockchainTransactionPool(t *testing.T) {
 	wallet := wallet_domain.NewWallet()
 	wtx := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver1", 10.99)
 	signature, err := wtx.GenerateSignature()
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	wtx2 := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver2", 20.99)
 	signature2, err := wtx2.GenerateSignature()
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 
 	// create 2 new transactions in blockchain pool after it was empty (for a future block):
 	t1, err := bc.CreateAppendTransaction(wallet.BlockChainAddress(), "receiver1", 10.99, wallet.PublicKey(), signature)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	t2, err := bc.CreateAppendTransaction(wallet.BlockChainAddress(), "receiver2", 20.99, wallet.PublicKey(), signature2)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	transactionPool := bc.TransactionPool()
 	assert.Len(t, transactionPool, 2)
 	assert.Equal(t, transactionPool[0], t1)
@@ -161,17 +163,17 @@ func TestBlockchainCalculateTransactionTotal(t *testing.T) {
 	wallet1 := wallet_domain.NewWallet()
 	wtx1 := wallet_domain.NewTransaction(wallet1.PrivateKey(), wallet1.BlockChainAddress(), "receiver1", 10.99)
 	signature1, err := wtx1.GenerateSignature()
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 
 	wallet2 := wallet_domain.NewWallet()
 	wtx2 := wallet_domain.NewTransaction(wallet2.PrivateKey(), wallet2.BlockChainAddress(), "receiver2", 20.99)
 	signature2, err := wtx2.GenerateSignature()
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 
 	wallet3 := wallet_domain.NewWallet()
 	wtx3 := wallet_domain.NewTransaction(wallet3.PrivateKey(), wallet3.BlockChainAddress(), "receiver1", 30.99)
 	signature3, err := wtx3.GenerateSignature()
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 
 	// Create some transactions
 	bc.CreateAppendTransaction(wallet1.BlockChainAddress(), "receiver1", 10.99, wallet1.PublicKey(), signature1)
@@ -191,4 +193,37 @@ func TestBlockchainCalculateTransactionTotal(t *testing.T) {
 
 	// Verify that the total is correct
 	assert.Equal(t, -20.99, total)
+}
+
+func TestVerifyTransactionSignature(t *testing.T) {
+	// Create a test blockchain
+	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
+
+	// Create a test transaction
+	wallet := wallet_domain.NewWallet()
+	tx := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "recipient", 10.99)
+
+	// Generate a signature for the transaction
+	signature, err := tx.GenerateSignature()
+	assert.NoError(t, err)
+
+	// Get the sender's public key
+	senderPublicKey := tx.SenderPublicKey()
+
+	// Test case 1: valid signature
+	assert.True(t, bc.VerifyTransactionSignature(senderPublicKey, signature, tx))
+
+	// Test case 2: invalid signature
+	invalidSignature := common.NewSignature(big.NewInt(1), big.NewInt(2))
+	assert.False(t, bc.VerifyTransactionSignature(senderPublicKey, invalidSignature, tx))
+
+	// Test case 3: nil sender public key
+	assert.False(t, bc.VerifyTransactionSignature(nil, signature, tx))
+
+	// Test case 4: nil signature
+	assert.False(t, bc.VerifyTransactionSignature(senderPublicKey, nil, tx))
+
+	// Test case 5: invalid transaction
+	invalidTx := newTransaction("", "", 0)
+	assert.False(t, bc.VerifyTransactionSignature(senderPublicKey, signature, invalidTx))
 }

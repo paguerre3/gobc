@@ -163,6 +163,9 @@ func (bc *blockChain) CalculateTransactionTotal(blockChainAddressOfRecipientOrSe
 }
 
 func (bc *blockChain) VerifyTransactionSignature(senderPublicKey *ecdsa.PublicKey, signature common.Signature, transaction Transaction) bool {
+	if senderPublicKey == nil || signature == nil {
+		return false
+	}
 	m, err := json.Marshal(transaction)
 	if err != nil {
 		return false
