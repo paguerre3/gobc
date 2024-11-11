@@ -28,7 +28,7 @@ type BlockChain interface {
 
 	CreateAppendBlock(nonce int, previousHash [32]byte) *Block
 	LastBlock() Block
-	CreateAppendTransaction(senderAddress string, receiverAddress string, amount float64,
+	CreateAppendTransaction(senderAddress string, receiverAddress string, amount float64, timeStamp *time.Time,
 		senderPublicKey *ecdsa.PublicKey, signature common.Signature) (Transaction, error)
 	CopyTransactionPool() []Transaction
 	IsValidProof(nonce int, previousHash [32]byte, transactions []Transaction, difficulty int) bool
@@ -52,7 +52,7 @@ func NewBlockchain(blockChainAddressOfRewardRecipient string) BlockChain {
 	bc.blockChainAddressOfRewardRecipient = blockChainAddressOfRewardRecipient
 	// add genesis transactions to blockchain Pool
 	// (the is no need of passing public key and signature for the genesis transaction scenario):
-	bc.CreateAppendTransaction(GENESSIS_SENDER_ADDRESS, GENESSIS_RECIPIENT_ADDRESS, 0, nil, nil)
+	bc.CreateAppendTransaction(GENESSIS_SENDER_ADDRESS, GENESSIS_RECIPIENT_ADDRESS, 0, nil, nil, nil)
 	bc.CreateAppendBlock(0, emptyBlock.Hash()) // transfer transacton "pool" from blockhain to new block and empty it
 	return bc
 }
@@ -82,9 +82,9 @@ func (bc *blockChain) LastBlock() Block {
 	return bc.chain[len(bc.chain)-1]
 }
 
-func (bc *blockChain) CreateAppendTransaction(senderAddress string, recipientAddress string, amount float64,
+func (bc *blockChain) CreateAppendTransaction(senderAddress string, recipientAddress string, amount float64, timeStamp *time.Time,
 	senderPublicKey *ecdsa.PublicKey, signature common.Signature) (Transaction, error) {
-	t := newTransaction(senderAddress, recipientAddress, amount)
+	t := newTransaction(senderAddress, recipientAddress, amount, timeStamp)
 	if senderAddress == MINING_SENDER_ADDRESS || senderAddress == GENESSIS_SENDER_ADDRESS {
 		// this is a transaction for reward so there is no need to verify the signature
 		// (also, there is no need to verify a genesis transaction case)
@@ -101,7 +101,8 @@ func (bc *blockChain) CreateAppendTransaction(senderAddress string, recipientAdd
 func (bc *blockChain) CopyTransactionPool() []Transaction {
 	clonedTransactions := make([]Transaction, len(bc.TransactionPool()))
 	for i, t := range bc.TransactionPool() {
-		clonedTransactions[i] = newTransaction(t.SenderAddress(), t.RecipientAddress(), t.Amount())
+		tt := t.TimeStamp()
+		clonedTransactions[i] = newTransaction(t.SenderAddress(), t.RecipientAddress(), t.Amount(), &tt)
 	}
 	return clonedTransactions
 }
@@ -137,7 +138,7 @@ func (bc *blockChain) ProofOfWork() int {
 func (bc *blockChain) Mining() bool {
 	// The blockChainn sender sends rewards to the blockChain address because of successfull mining
 	// (no nee to pass public key and signature for "rewards" scenario):
-	bc.CreateAppendTransaction(MINING_SENDER_ADDRESS, bc.BlockChainAddressOfRewardRecipient(), MINING_REWARD, nil, nil)
+	bc.CreateAppendTransaction(MINING_SENDER_ADDRESS, bc.BlockChainAddressOfRewardRecipient(), MINING_REWARD, nil, nil, nil)
 	nonce := bc.ProofOfWork()
 	var b *Block = nil
 	if nonce > 0 {

@@ -19,12 +19,16 @@ type transaction struct {
 	timeStamp        time.Time
 }
 
-func newTransaction(senderAddress string, receipientAddress string, amount float64) Transaction {
+func newTransaction(senderAddress string, receipientAddress string, amount float64, timeStamp *time.Time) Transaction {
+	tt := time.Now()
+	if timeStamp != nil {
+		tt = *timeStamp
+	}
 	return &transaction{
 		senderAddress:    senderAddress,
 		recipientAddress: receipientAddress,
 		amount:           amount,
-		timeStamp:        time.Now(),
+		timeStamp:        tt,
 	}
 }
 

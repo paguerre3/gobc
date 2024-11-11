@@ -3,6 +3,7 @@ package domain
 import (
 	"encoding/json"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -10,7 +11,8 @@ import (
 func TestNewBlock(t *testing.T) {
 	nonce := 1
 	previousHash := [32]byte{}
-	transactions := []Transaction{newTransaction("sender", "receiver", 10.99)}
+	tt := time.Now()
+	transactions := []Transaction{newTransaction("sender", "receiver", 10.99, &tt)}
 
 	block := newBlock(nonce, previousHash, transactions)
 

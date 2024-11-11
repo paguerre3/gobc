@@ -48,10 +48,11 @@ func TestBlockchainCreateAppendTransaction(t *testing.T) {
 
 	wallet := wallet_domain.NewWallet()
 	wtx := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver", 10.99)
+	wtt := wtx.TimeStamp()
 	signature, err := wtx.GenerateSignature()
 	assert.NoError(t, err)
 
-	transaction, err := bc.CreateAppendTransaction(wallet.BlockChainAddress(), "receiver", 10.99, wallet.PublicKey(), signature)
+	transaction, err := bc.CreateAppendTransaction(wallet.BlockChainAddress(), "receiver", 10.99, &wtt, wallet.PublicKey(), signature)
 	assert.NotNil(t, transaction)
 	assert.NoError(t, err)
 	assert.Len(t, bc.TransactionPool(), 1)
@@ -83,16 +84,18 @@ func TestBlockchainTransactionPool(t *testing.T) {
 
 	wallet := wallet_domain.NewWallet()
 	wtx := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver1", 10.99)
+	wtt := wtx.TimeStamp()
 	signature, err := wtx.GenerateSignature()
 	assert.NoError(t, err)
 	wtx2 := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver2", 20.99)
+	wtt2 := wtx2.TimeStamp()
 	signature2, err := wtx2.GenerateSignature()
 	assert.NoError(t, err)
 
 	// create 2 new transactions in blockchain pool after it was empty (for a future block):
-	t1, err := bc.CreateAppendTransaction(wallet.BlockChainAddress(), "receiver1", 10.99, wallet.PublicKey(), signature)
+	t1, err := bc.CreateAppendTransaction(wallet.BlockChainAddress(), "receiver1", 10.99, &wtt, wallet.PublicKey(), signature)
 	assert.NoError(t, err)
-	t2, err := bc.CreateAppendTransaction(wallet.BlockChainAddress(), "receiver2", 20.99, wallet.PublicKey(), signature2)
+	t2, err := bc.CreateAppendTransaction(wallet.BlockChainAddress(), "receiver2", 20.99, &wtt2, wallet.PublicKey(), signature2)
 	assert.NoError(t, err)
 	transactionPool := bc.TransactionPool()
 	assert.Len(t, transactionPool, 2)
@@ -162,23 +165,26 @@ func TestBlockchainCalculateTransactionTotal(t *testing.T) {
 
 	wallet1 := wallet_domain.NewWallet()
 	wtx1 := wallet_domain.NewTransaction(wallet1.PrivateKey(), wallet1.BlockChainAddress(), "receiver1", 10.99)
+	wtt1 := wtx1.TimeStamp()
 	signature1, err := wtx1.GenerateSignature()
 	assert.NoError(t, err)
 
 	wallet2 := wallet_domain.NewWallet()
 	wtx2 := wallet_domain.NewTransaction(wallet2.PrivateKey(), wallet2.BlockChainAddress(), "receiver2", 20.99)
+	wtt2 := wtx2.TimeStamp()
 	signature2, err := wtx2.GenerateSignature()
 	assert.NoError(t, err)
 
 	wallet3 := wallet_domain.NewWallet()
 	wtx3 := wallet_domain.NewTransaction(wallet3.PrivateKey(), wallet3.BlockChainAddress(), "receiver1", 30.99)
+	wtt3 := wtx3.TimeStamp()
 	signature3, err := wtx3.GenerateSignature()
 	assert.NoError(t, err)
 
 	// Create some transactions
-	bc.CreateAppendTransaction(wallet1.BlockChainAddress(), "receiver1", 10.99, wallet1.PublicKey(), signature1)
-	bc.CreateAppendTransaction(wallet2.BlockChainAddress(), "receiver2", 20.99, wallet2.PublicKey(), signature2)
-	bc.CreateAppendTransaction(wallet3.BlockChainAddress(), "receiver1", 30.99, wallet3.PublicKey(), signature3)
+	bc.CreateAppendTransaction(wallet1.BlockChainAddress(), "receiver1", 10.99, &wtt1, wallet1.PublicKey(), signature1)
+	bc.CreateAppendTransaction(wallet2.BlockChainAddress(), "receiver2", 20.99, &wtt2, wallet2.PublicKey(), signature2)
+	bc.CreateAppendTransaction(wallet3.BlockChainAddress(), "receiver1", 30.99, &wtt3, wallet3.PublicKey(), signature3)
 
 	assert.True(t, bc.Mining())
 
@@ -224,6 +230,6 @@ func TestVerifyTransactionSignature(t *testing.T) {
 	assert.False(t, bc.VerifyTransactionSignature(senderPublicKey, nil, tx))
 
 	// Test case 5: invalid transaction
-	invalidTx := newTransaction("", "", 0)
+	invalidTx := newTransaction("", "", 0, nil)
 	assert.False(t, bc.VerifyTransactionSignature(senderPublicKey, signature, invalidTx))
 }

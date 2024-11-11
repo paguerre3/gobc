@@ -22,6 +22,7 @@ func newBlockChainWithFmt() func() domain.BlockChain {
 
 // calculate and print transaction total
 func fmtTransactionTotal(blockChain *domain.BlockChain, senderOrReceipientAddress string) {
+	fmt.Println(strings.Repeat("@", 75))
 	fmt.Printf("%s Transaction total: %.1f\n", senderOrReceipientAddress, (*blockChain).CalculateTransactionTotal(senderOrReceipientAddress))
 }
 
@@ -37,9 +38,11 @@ func newWalletWithfmt() func() wallet_domain.Wallet {
 
 // generate transactuion signature and print
 func fmtTransactionSignature(transation *wallet_domain.Transaction) common.Signature {
+	fmt.Println(strings.Repeat(">", 75))
 	tx := (*transation)
 	signature, _ := tx.GenerateSignature()
-	fmt.Printf("Transaction: %+v \nSignature: %s\n", tx, signature) // it uses signature.String()
+	json, _ := json.MarshalIndent(tx, "", "  ")
+	fmt.Printf("Transaction: %s \nSignature: %s\n", string(json), signature) // it uses signature.String()
 	return signature
 }
 
@@ -52,12 +55,13 @@ func main() {
 
 	// Wallet A address is Sender and Wallet B address is Recipient.
 	tx1 := wallet_domain.NewTransaction(walletA.PrivateKey(), walletA.BlockChainAddress(), walletB.BlockChainAddress(), 1.0)
+	tt1 := tx1.TimeStamp()
 	signature1 := fmtTransactionSignature(&tx1)
 
 	// Blockchain:
 	fmtBlockChain := newBlockChainWithFmt()
 	blockChain := fmtBlockChain()
-	_, err := blockChain.CreateAppendTransaction(walletA.BlockChainAddress(), walletB.BlockChainAddress(), tx1.Amount(),
+	_, err := blockChain.CreateAppendTransaction(walletA.BlockChainAddress(), walletB.BlockChainAddress(), tx1.Amount(), &tt1,
 		walletA.PublicKey(), signature1)
 	if err != nil {
 		panic(err)
@@ -72,8 +76,9 @@ func main() {
 
 	// Wallet B address is Sender and Wallet D address is Recipient.
 	tx2 := wallet_domain.NewTransaction(walletB.PrivateKey(), walletB.BlockChainAddress(), walletD.BlockChainAddress(), 2.5)
+	tt2 := tx2.TimeStamp()
 	signature2 := fmtTransactionSignature(&tx2)
-	_, err = blockChain.CreateAppendTransaction(walletB.BlockChainAddress(), walletD.BlockChainAddress(), tx2.Amount(),
+	_, err = blockChain.CreateAppendTransaction(walletB.BlockChainAddress(), walletD.BlockChainAddress(), tx2.Amount(), &tt2,
 		walletB.PublicKey(), signature2)
 	if err != nil {
 		panic(err)
@@ -81,8 +86,9 @@ func main() {
 
 	// Wallet C address is Sender and Wallet D address is Recipient.
 	tx3 := wallet_domain.NewTransaction(walletC.PrivateKey(), walletC.BlockChainAddress(), walletD.BlockChainAddress(), 5.0)
+	tt3 := tx3.TimeStamp()
 	signature3 := fmtTransactionSignature(&tx3)
-	_, err = blockChain.CreateAppendTransaction(walletC.BlockChainAddress(), walletD.BlockChainAddress(), tx3.Amount(),
+	_, err = blockChain.CreateAppendTransaction(walletC.BlockChainAddress(), walletD.BlockChainAddress(), tx3.Amount(), &tt3,
 		walletC.PublicKey(), signature3)
 	if err != nil {
 		panic(err)
