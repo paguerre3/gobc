@@ -11,7 +11,7 @@ import (
 )
 
 func newBlockChainWithFmt() func() domain.BlockChain {
-	bc := domain.NewBlockchain(domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS)
+	bc := domain.NewBlockchain(domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS, false)
 	return func() domain.BlockChain {
 		fmt.Println(strings.Repeat("#", 75))
 		json, _ := json.MarshalIndent(bc, "", "  ")
@@ -61,11 +61,8 @@ func main() {
 	// Blockchain:
 	fmtBlockChain := newBlockChainWithFmt()
 	blockChain := fmtBlockChain()
-	_, err := blockChain.CreateAppendTransaction(walletA.BlockChainAddress(), walletB.BlockChainAddress(), tx1.Amount(), &tt1,
+	blockChain.CreateAppendTransaction(walletA.BlockChainAddress(), walletB.BlockChainAddress(), tx1.Amount(), &tt1,
 		walletA.PublicKey(), signature1)
-	if err != nil {
-		panic(err)
-	}
 	//previousHash := blockChain.LastBlock().Hash()
 	//nonce := blockChain.ProofOfWork()
 	//blockChain.CreateAppendBlock(nonce, previousHash)
@@ -78,21 +75,15 @@ func main() {
 	tx2 := wallet_domain.NewTransaction(walletB.PrivateKey(), walletB.BlockChainAddress(), walletD.BlockChainAddress(), 2.5)
 	tt2 := tx2.TimeStamp()
 	signature2 := fmtTransactionSignature(&tx2)
-	_, err = blockChain.CreateAppendTransaction(walletB.BlockChainAddress(), walletD.BlockChainAddress(), tx2.Amount(), &tt2,
+	blockChain.CreateAppendTransaction(walletB.BlockChainAddress(), walletD.BlockChainAddress(), tx2.Amount(), &tt2,
 		walletB.PublicKey(), signature2)
-	if err != nil {
-		panic(err)
-	}
 
 	// Wallet C address is Sender and Wallet D address is Recipient.
 	tx3 := wallet_domain.NewTransaction(walletC.PrivateKey(), walletC.BlockChainAddress(), walletD.BlockChainAddress(), 5.0)
 	tt3 := tx3.TimeStamp()
 	signature3 := fmtTransactionSignature(&tx3)
-	_, err = blockChain.CreateAppendTransaction(walletC.BlockChainAddress(), walletD.BlockChainAddress(), tx3.Amount(), &tt3,
+	blockChain.CreateAppendTransaction(walletC.BlockChainAddress(), walletD.BlockChainAddress(), tx3.Amount(), &tt3,
 		walletC.PublicKey(), signature3)
-	if err != nil {
-		panic(err)
-	}
 	//previousHash = blockChain.LastBlock().Hash()
 	//nonce = blockChain.ProofOfWork()
 	//blockChain.CreateAppendBlock(nonce, previousHash)

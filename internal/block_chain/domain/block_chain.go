@@ -25,6 +25,7 @@ type BlockChain interface {
 	TransactionPool() []Transaction
 	Chain() []Block
 	BlockChainAddressOfRewardRecipient() string
+	CheckFunds() bool
 
 	CreateAppendBlock(nonce int, previousHash [32]byte) *Block
 	LastBlock() Block
@@ -43,13 +44,15 @@ type blockChain struct {
 	transactionPool                    []Transaction
 	chain                              []Block
 	blockChainAddressOfRewardRecipient string // server address registered to "receive" rewards of succesffull mining (the 1st sending the right PoW)
+	checkFunds                         bool
 }
 
-func NewBlockchain(blockChainAddressOfRewardRecipient string) BlockChain {
+func NewBlockchain(blockChainAddressOfRewardRecipient string, checkFunds bool) BlockChain {
 	// only hash of empty block is stored at the beginning (using default fields):
 	emptyBlock := &block{}
 	bc := new(blockChain)
 	bc.blockChainAddressOfRewardRecipient = blockChainAddressOfRewardRecipient
+	bc.checkFunds = checkFunds
 	// add genesis transactions to blockchain Pool
 	// (the is no need of passing public key and signature for the genesis transaction scenario):
 	bc.CreateAppendTransaction(GENESSIS_SENDER_ADDRESS, GENESSIS_RECIPIENT_ADDRESS, 0, nil, nil, nil)
@@ -67,6 +70,10 @@ func (bc *blockChain) Chain() []Block {
 
 func (bc *blockChain) BlockChainAddressOfRewardRecipient() string {
 	return bc.blockChainAddressOfRewardRecipient
+}
+
+func (bc *blockChain) CheckFunds() bool {
+	return bc.checkFunds
 }
 
 func (bc *blockChain) CreateAppendBlock(nonce int, previousHash [32]byte) *Block {
@@ -95,10 +102,9 @@ func (bc *blockChain) CreateAppendTransaction(senderAddress string, recipientAdd
 
 		// Real case scenario, a wallet needs to have funds for sending cryptos
 		// received via Mining rewards or transactions from other wallets before sending criptos!
-		// WIP: code commented for now.
-		//if bc.CalculateTransactionTotal(senderAddress) < amount {
-		//	return nil, fmt.Errorf("insufficient funds")
-		//}
+		if bc.CheckFunds() && bc.CalculateTransactionTotal(senderAddress) < amount {
+			return nil, fmt.Errorf("insufficient funds")
+		}
 		bc.transactionPool = append(bc.transactionPool, t)
 		return t, nil
 	}
