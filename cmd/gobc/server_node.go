@@ -7,7 +7,7 @@ import (
 )
 
 type ServerNode interface {
-	Run()
+	InitAndRun()
 }
 
 type serverNode struct {
@@ -18,7 +18,7 @@ func newServerNode(port string) ServerNode {
 	return &serverNode{port: port}
 }
 
-func (s *serverNode) Run() {
+func (s *serverNode) InitAndRun() {
 	// Initialize a new Gin router
 	router := gin.Default()
 
