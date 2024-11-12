@@ -4,6 +4,7 @@ go 1.23.1
 
 require (
 	github.com/btcsuite/btcutil v1.0.2
+	github.com/gin-gonic/gin v1.10.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/crypto v0.29.0
 )
@@ -16,7 +17,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.6 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.10.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.22.1 // indirect
