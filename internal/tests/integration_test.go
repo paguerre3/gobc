@@ -31,14 +31,12 @@ func fmtTransactionTotal(blockChain *domain.BlockChain, senderOrReceipientAddres
 	return total
 }
 
-func newWalletWithfmt() func() wallet_domain.Wallet {
+func newWalletFmtd() wallet_domain.Wallet {
 	w := wallet_domain.NewWallet()
-	return func() wallet_domain.Wallet {
-		fmt.Println(strings.Repeat("*", 75))
-		json, _ := json.MarshalIndent(w, "", "  ")
-		fmt.Println(string(json))
-		return w
-	}
+	fmt.Println(strings.Repeat("*", 75))
+	json, _ := json.MarshalIndent(w, "", "  ")
+	fmt.Println(string(json))
+	return w
 }
 
 // generate transactuion signature and print
@@ -53,10 +51,10 @@ func fmtTransactionSignature(transation *wallet_domain.Transaction) common.Signa
 
 func toggleBlockChainIntegration(checkFunds bool) (float64, float64, float64, float64, float64) {
 	// Wallets:
-	walletA := newWalletWithfmt()()
-	walletB := newWalletWithfmt()()
-	walletC := newWalletWithfmt()()
-	walletD := newWalletWithfmt()()
+	walletA := newWalletFmtd()
+	walletB := newWalletFmtd()
+	walletC := newWalletFmtd()
+	walletD := newWalletFmtd()
 
 	// Wallet A address is Sender and Wallet B address is Recipient.
 	tx1 := wallet_domain.NewTransaction(walletA.PrivateKey(), walletA.BlockChainAddress(), walletB.BlockChainAddress(), 1.0)
