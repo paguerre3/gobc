@@ -209,6 +209,13 @@ go get github.com/btcsuite/btcutil/base58
 
 
 ---
+## Blockchain Nodes (WEB Servers)
+
+Creation of several **blockchain nodes**/web servers using different ports running on the same VM. 
+
+![blockchain nodes](./assets/10_blockchain_web_servers.png)
+
+---
 ## SAGA
 
 The **Saga pattern** is a design pattern **used to manage distributed transactions in microservices architectures**. In traditional monolithic systems, a single transaction could be easily managed with ACID properties (Atomicity, Consistency, Isolation, Durability). However, **in a microservices environment, where each service has its own database, it's difficult to maintain a single atomic transaction across multiple services**.
