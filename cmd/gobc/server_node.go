@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 )
 
 type ServerNode interface {
@@ -19,16 +19,16 @@ func newServerNode(port string) ServerNode {
 }
 
 func (s *serverNode) InitAndRun() {
-	// Initialize a new Gin router
-	router := gin.Default()
+	// Initialize a new Echo instance
+	e := echo.New()
 
 	// Define a simple GET route
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
+	e.GET("/ping", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, map[string]string{
 			"message": "pong",
 		})
 	})
 
-	// Start the server on port 8080
-	router.Run(s.port)
+	// Start the server on the specified port
+	e.Start(s.port)
 }
