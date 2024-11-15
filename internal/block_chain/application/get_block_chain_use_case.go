@@ -12,7 +12,7 @@ var (
 )
 
 type GetBlockChainUseCase interface {
-	Instance() domain.BlockChain
+	Instance() (domain.BlockChain, bool)
 }
 
 type getBlockChainUseCase struct {
@@ -30,7 +30,7 @@ func NewGetBlockChainUseCase(wallet domain.Wallet, serverPort string,
 	}
 }
 
-func (gbc *getBlockChainUseCase) Instance() domain.BlockChain {
+func (gbc *getBlockChainUseCase) Instance() (domain.BlockChain, bool) {
 	bc, ok := blockChainCache[gbc.serverPort]
 	if !ok {
 		mutex.Lock()
@@ -41,5 +41,5 @@ func (gbc *getBlockChainUseCase) Instance() domain.BlockChain {
 			blockChainCache[bc.ServerPort()] = bc
 		}
 	}
-	return bc
+	return bc, ok
 }
