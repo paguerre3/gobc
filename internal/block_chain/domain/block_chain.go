@@ -19,6 +19,7 @@ const (
 	MINING_SENDER_ADDRESS          = "THE_BLOCKCHAIN_MINING_SENDER_ADDRESS" // block chain mining server address that "sends" rewards
 	MINING_REWARD                  = 1.0
 	MY_BLOCK_CHAIN_RECEIPT_ADDRESS = "MY_BLOCKCHAIN_RECEIPT_ADDRESS_TO_OBTAIN_MINING_REWARD" // address for receiving mining rewards
+	TEST_SERVER_PORT               = ":0000"
 )
 
 type BlockChain interface {
@@ -26,6 +27,7 @@ type BlockChain interface {
 	Chain() []Block
 	BlockChainAddressOfRewardRecipient() string
 	CheckFunds() bool
+	ServerPort() string
 
 	CreateAppendBlock(nonce int, previousHash [32]byte) *Block
 	LastBlock() Block
@@ -45,14 +47,16 @@ type blockChain struct {
 	chain                              []Block
 	blockChainAddressOfRewardRecipient string // server address registered to "receive" rewards of succesffull mining (the 1st sending the right PoW)
 	checkFunds                         bool
+	serverPort                         string
 }
 
-func NewBlockchain(blockChainAddressOfRewardRecipient string, checkFunds bool) BlockChain {
+func NewBlockchain(blockChainAddressOfRewardRecipient string, checkFunds bool, serverPort string) BlockChain {
 	// only hash of empty block is stored at the beginning (using default fields):
 	emptyBlock := &block{}
 	bc := new(blockChain)
 	bc.blockChainAddressOfRewardRecipient = blockChainAddressOfRewardRecipient
 	bc.checkFunds = checkFunds
+	bc.serverPort = serverPort
 	// add genesis transactions to blockchain Pool
 	// (the is no need of passing public key and signature for the genesis transaction scenario):
 	bc.CreateAppendTransaction(GENESSIS_SENDER_ADDRESS, GENESSIS_RECIPIENT_ADDRESS, 0, nil, nil, nil)
@@ -74,6 +78,10 @@ func (bc *blockChain) BlockChainAddressOfRewardRecipient() string {
 
 func (bc *blockChain) CheckFunds() bool {
 	return bc.checkFunds
+}
+
+func (bc *blockChain) ServerPort() string {
+	return bc.serverPort
 }
 
 func (bc *blockChain) CreateAppendBlock(nonce int, previousHash [32]byte) *Block {
@@ -194,9 +202,13 @@ func (bc *blockChain) MarshalJSON() ([]byte, error) {
 		TransactionPool                    []Transaction `json:"transactionPool"`
 		Chain                              []Block       `json:"chain"`
 		BlockChainAddressOfRewardRecipient string        `json:"blockChainAddressOfRewardRecipient"`
+		CheckFunds                         bool          `json:"checkFunds"`
+		ServerPort                         string        `json:"serverPort"`
 	}{
 		TransactionPool:                    bc.transactionPool,
 		Chain:                              bc.chain,
 		BlockChainAddressOfRewardRecipient: bc.blockChainAddressOfRewardRecipient,
+		CheckFunds:                         bc.checkFunds,
+		ServerPort:                         bc.serverPort,
 	})
 }

@@ -14,7 +14,7 @@ import (
 )
 
 func newBlockChainWithFmt(checkFunds bool) func() domain.BlockChain {
-	bc := domain.NewBlockchain(domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS, checkFunds)
+	bc := domain.NewBlockchain(domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS, checkFunds, domain.TEST_SERVER_PORT)
 	return func() domain.BlockChain {
 		fmt.Println(strings.Repeat("#", 75))
 		json, _ := json.MarshalIndent(bc, "", "  ")
