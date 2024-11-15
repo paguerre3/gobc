@@ -19,7 +19,6 @@ const (
 	MINING_SENDER_ADDRESS          = "THE_BLOCKCHAIN_MINING_SENDER_ADDRESS" // block chain mining server address that "sends" rewards
 	MINING_REWARD                  = 1.0
 	MY_BLOCK_CHAIN_RECEIPT_ADDRESS = "MY_BLOCKCHAIN_RECEIPT_ADDRESS_TO_OBTAIN_MINING_REWARD" // address for receiving mining rewards
-	TEST_SERVER_PORT               = ":0000"
 )
 
 type BlockChain interface {

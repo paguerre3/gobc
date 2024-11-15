@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/paguerre3/blockchain/internal/block_chain/domain"
+	"github.com/paguerre3/blockchain/internal/common"
 	wallet_domain "github.com/paguerre3/blockchain/internal/wallet/domain"
 	"github.com/stretchr/testify/assert"
 )
@@ -14,7 +14,7 @@ func TestGetBlockChainUseCase(t *testing.T) {
 
 	// Test case 1: cache hit
 	wallet1 := wallet_domain.NewWallet()
-	serverPort := domain.TEST_SERVER_PORT
+	serverPort := common.TEST_SERVER_PORT
 	gbc := NewGetBlockChainUseCase(wallet1, serverPort, true)
 	bc1 := gbc.Instance()
 	assert.NotNil(t, bc1)
@@ -22,10 +22,13 @@ func TestGetBlockChainUseCase(t *testing.T) {
 	bc1Cached := gbc.Instance()
 	assert.NotNil(t, bc1Cached)
 	assert.Equal(t, bc1, bc1Cached)
+	assert.Equal(t, serverPort, bc1Cached.ServerPort())
+	assert.Equal(t, wallet1.BlockChainAddress(), bc1Cached.BlockChainAddressOfRewardRecipient())
+	assert.Equal(t, bc1.BlockChainAddressOfRewardRecipient(), bc1Cached.BlockChainAddressOfRewardRecipient())
 
 	// Test case 2: cache miss, so create and get new instance
 	wallet2 := wallet_domain.NewWallet()
-	serverPort2 := strings.ReplaceAll(domain.TEST_SERVER_PORT, "0", "1")
+	serverPort2 := strings.ReplaceAll(common.TEST_SERVER_PORT, "0", "1")
 	gbc2 := NewGetBlockChainUseCase(wallet2, serverPort2, true)
 	bc2 := gbc2.Instance()
 	assert.NotNil(t, bc2)
