@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/paguerre3/blockchain/internal/common"
+	common_domain "github.com/paguerre3/blockchain/internal/common/domain"
 )
 
 type Transaction interface {
@@ -18,7 +18,7 @@ type Transaction interface {
 	Amount() float64
 	TimeStamp() time.Time
 
-	GenerateSignature() (common.Signature, error)
+	GenerateSignature() (common_domain.Signature, error)
 }
 
 type transaction struct {
@@ -65,7 +65,7 @@ func (t *transaction) TimeStamp() time.Time {
 	return t.timeStamp
 }
 
-func (t *transaction) GenerateSignature() (common.Signature, error) {
+func (t *transaction) GenerateSignature() (common_domain.Signature, error) {
 	m, err := json.Marshal(t)
 	if err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func (t *transaction) GenerateSignature() (common.Signature, error) {
 	h := sha256.Sum256([]byte(m))
 	// sign hash of json
 	r, s, err := ecdsa.Sign(rand.Reader, t.senderPrivateKey, h[:])
-	return common.NewSignature(r, s), err
+	return common_domain.NewSignature(r, s), err
 }
 
 func (t *transaction) MarshalJSON() ([]byte, error) {

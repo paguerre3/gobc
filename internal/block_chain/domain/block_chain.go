@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/paguerre3/blockchain/internal/common"
+	common_domain "github.com/paguerre3/blockchain/internal/common/domain"
 )
 
 const (
@@ -31,14 +31,14 @@ type BlockChain interface {
 	CreateAppendBlock(nonce int, previousHash [32]byte) *Block
 	LastBlock() Block
 	CreateAppendTransaction(senderAddress string, receiverAddress string, amount float64, timeStamp *time.Time,
-		senderPublicKey *ecdsa.PublicKey, signature common.Signature) (Transaction, error)
+		senderPublicKey *ecdsa.PublicKey, signature common_domain.Signature) (Transaction, error)
 	CopyTransactionPool() []Transaction
 	IsValidProof(nonce int, previousHash [32]byte, transactions []Transaction, difficulty int) bool
 	ProofOfWork() int
 	Mining() bool
 	CalculateTransactionTotal(blockChainAddressOfReceipientOrSender string) float64
 
-	VerifyTransactionSignature(senderPublicKey *ecdsa.PublicKey, signature common.Signature, transaction Transaction) bool
+	VerifyTransactionSignature(senderPublicKey *ecdsa.PublicKey, signature common_domain.Signature, transaction Transaction) bool
 }
 
 type blockChain struct {
@@ -97,7 +97,7 @@ func (bc *blockChain) LastBlock() Block {
 }
 
 func (bc *blockChain) CreateAppendTransaction(senderAddress string, recipientAddress string, amount float64, timeStamp *time.Time,
-	senderPublicKey *ecdsa.PublicKey, signature common.Signature) (Transaction, error) {
+	senderPublicKey *ecdsa.PublicKey, signature common_domain.Signature) (Transaction, error) {
 	t := newTransaction(senderAddress, recipientAddress, amount, timeStamp)
 	if senderAddress == MINING_SENDER_ADDRESS || senderAddress == GENESSIS_SENDER_ADDRESS {
 		// this is a transaction for reward so there is no need to verify the signature
@@ -183,7 +183,7 @@ func (bc *blockChain) CalculateTransactionTotal(blockChainAddressOfRecipientOrSe
 	return total
 }
 
-func (bc *blockChain) VerifyTransactionSignature(senderPublicKey *ecdsa.PublicKey, signature common.Signature, transaction Transaction) bool {
+func (bc *blockChain) VerifyTransactionSignature(senderPublicKey *ecdsa.PublicKey, signature common_domain.Signature, transaction Transaction) bool {
 	if senderPublicKey == nil || signature == nil {
 		return false
 	}

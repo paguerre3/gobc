@@ -8,13 +8,13 @@ import (
 	"testing"
 
 	"github.com/paguerre3/blockchain/internal/block_chain/domain"
-	"github.com/paguerre3/blockchain/internal/common"
+	common_domain "github.com/paguerre3/blockchain/internal/common/domain"
 	wallet_domain "github.com/paguerre3/blockchain/internal/wallet/domain"
 	"github.com/stretchr/testify/assert"
 )
 
 func newBlockChainWithFmt(checkFunds bool) func() domain.BlockChain {
-	bc := domain.NewBlockchain(domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS, checkFunds, common.TEST_SERVER_PORT)
+	bc := domain.NewBlockchain(domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS, checkFunds, common_domain.TEST_SERVER_PORT)
 	return func() domain.BlockChain {
 		fmt.Println(strings.Repeat("#", 75))
 		json, _ := json.MarshalIndent(bc, "", "  ")
@@ -40,7 +40,7 @@ func newWalletFmtd() wallet_domain.Wallet {
 }
 
 // generate transactuion signature and print
-func fmtTransactionSignature(transation *wallet_domain.Transaction) common.Signature {
+func fmtTransactionSignature(transation *wallet_domain.Transaction) common_domain.Signature {
 	fmt.Println(strings.Repeat(">", 75))
 	tx := (*transation)
 	signature, _ := tx.GenerateSignature()

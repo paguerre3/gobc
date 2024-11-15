@@ -1,10 +1,10 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+
+	common_api "github.com/paguerre3/blockchain/internal/common/api"
 )
 
 type ServerNode interface {
@@ -25,14 +25,8 @@ func (s *serverNode) InitAndRun() {
 	e := echo.New()
 
 	// Define a simple GET route
-	e.GET("/ping", ping)
+	e.GET("/ping", common_api.Ping)
 
 	// Start the server on the specified port
 	e.Start(s.port)
-}
-
-func ping(c echo.Context) error {
-	return c.JSON(http.StatusOK, map[string]string{
-		"message": "pong",
-	})
 }

@@ -5,13 +5,13 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/paguerre3/blockchain/internal/common"
+	common_domain "github.com/paguerre3/blockchain/internal/common/domain"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetWalletUseCase(t *testing.T) {
 	// Create a test server port
-	serverPort := common.TEST_SERVER_PORT
+	serverPort := common_domain.TEST_SERVER_PORT
 
 	// Create a test GetWalletUseCase instance
 	gwc := NewGetWalletUseCase(serverPort)
