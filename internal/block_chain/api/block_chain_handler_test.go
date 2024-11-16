@@ -34,4 +34,9 @@ func TestBlockChainHandler(t *testing.T) {
 	var jsonMap map[string]interface{}
 	err = json.Unmarshal(rec.Body.Bytes(), &jsonMap)
 	assert.NoError(t, err)
+
+	assert.Contains(t, jsonMap, "transactionPool")
+	assert.Contains(t, jsonMap, "chain")
+	assert.Contains(t, jsonMap, "blockChainAddressOfRewardRecipient")
+	assert.Contains(t, jsonMap, "checkFunds")
 }
