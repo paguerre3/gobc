@@ -5,15 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Package",
+            "name": "Launch Blockchain Package",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/gobc/main.go",
+            "program": "${workspaceFolder}/cmd/gobc/block_chain_server/main.go",
             "console": "integratedTerminal"  // Use integratedTerminal for user input of fmt.Scan
         },
         {
-            "name": "Test Package",
+            "name": "Complete Test Package Including ALL Domains",
             "type": "go",
             "request": "launch",
             "mode": "auto",
