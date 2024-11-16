@@ -46,16 +46,15 @@ func (s *serverNode) InitAndRun() {
 	// Initialize a new Echo instance
 	e := echo.New()
 
-	// Define a simple GET route
-	e.GET("/ping", common_api.Ping)
-
-	// use cases
+	// Use cases
 	getWalletUseCase := wallet_app.NewGetWalletUseCase(s.port)
 	getBlockChainUseCase := application.NewGetBlockChainUseCase(getWalletUseCase.Instance(), s.port, false)
 
-	// handlers
+	// Handlers
 	blockChainApi := block_chain_api.NewBlockChainHandler(getBlockChainUseCase)
 	e.GET("/block-chain", blockChainApi.GetBlockChain)
+
+	e.GET("/ping", common_api.Ping)
 
 	// Start the server on the specified port
 	e.Start(s.port)
