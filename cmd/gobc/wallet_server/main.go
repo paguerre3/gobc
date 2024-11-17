@@ -16,6 +16,7 @@ func registerWalletHandlers(e *echo.Echo, serverPort string) {
 
 	// handlers
 	walletApi := wallet_api.NewWalletHandler()
+	e.GET("/", walletApi.Index)
 	e.GET("/welcome", walletApi.Index)
 }
 
