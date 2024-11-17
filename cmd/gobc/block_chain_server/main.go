@@ -36,7 +36,8 @@ func main() {
 		go func(port int) {
 			defer wg.Done()
 			serverPort := fmt.Sprintf(":500%d", port)
-			common_api.NewServerNode("BlockChain", serverPort,
+			// no gateway for blockChain servers:
+			common_api.NewServerNode("BlockChain", serverPort, "",
 				registerBlockChainHandlers).InitAndRun()
 		}(i)
 	}

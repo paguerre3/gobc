@@ -12,20 +12,22 @@ type ServerNode interface {
 type serverNode struct {
 	name             string
 	serverPort       string
+	gateway          string
 	registerHandlers func(e *echo.Echo, serverPort string)
 }
 
-func NewServerNode(name, serverPort string,
+func NewServerNode(name, serverPort string, gateway string,
 	registerHandlers func(e *echo.Echo, serverPort string)) ServerNode {
 	return &serverNode{
 		name:             name,
 		serverPort:       serverPort,
+		gateway:          gateway,
 		registerHandlers: registerHandlers,
 	}
 }
 
 func (s *serverNode) InitAndRun() {
-	log.Infof("Starting %s Server on TCP Port %s", s.name, s.serverPort)
+	log.Infof("Starting %s Server on TCP Port %s and Gateway %s", s.name, s.serverPort, s.gateway)
 	// Initialize a new Echo instance
 	e := echo.New()
 
