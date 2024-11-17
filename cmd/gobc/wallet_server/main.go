@@ -13,6 +13,7 @@ const (
 )
 
 func registerWalletHandlers(e *echo.Echo, serverPort string) {
+	e.Renderer = common_api.NewTemplateRenderer(wallet_api.WALLET_TEMPLATES_PATH)
 
 	// handlers
 	walletApi := wallet_api.NewWalletHandler()
