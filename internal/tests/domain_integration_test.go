@@ -2,7 +2,7 @@ package tests
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"strings"
 
 	"testing"
@@ -16,36 +16,36 @@ import (
 func newBlockChainWithFmt(checkFunds bool) func() domain.BlockChain {
 	bc := domain.NewBlockchain(domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS, checkFunds, common_domain.TEST_SERVER_PORT)
 	return func() domain.BlockChain {
-		fmt.Println(strings.Repeat("#", 75))
+		log.Println(strings.Repeat("#", 75))
 		json, _ := json.MarshalIndent(bc, "", "  ")
-		fmt.Println(string(json))
+		log.Println(string(json))
 		return bc
 	}
 }
 
 // calculate and print transaction total
 func fmtTransactionTotal(blockChain *domain.BlockChain, senderOrReceipientAddress string) float64 {
-	fmt.Println(strings.Repeat("@", 75))
+	log.Println(strings.Repeat("@", 75))
 	total := (*blockChain).CalculateTransactionTotal(senderOrReceipientAddress)
-	fmt.Printf("%s Transaction total: %.1f\n", senderOrReceipientAddress, total)
+	log.Printf("%s Transaction total: %.1f\n", senderOrReceipientAddress, total)
 	return total
 }
 
 func newWalletFmtd() wallet_domain.Wallet {
 	w := wallet_domain.NewWallet()
-	fmt.Println(strings.Repeat("*", 75))
+	log.Println(strings.Repeat("*", 75))
 	json, _ := json.MarshalIndent(w, "", "  ")
-	fmt.Println(string(json))
+	log.Println(string(json))
 	return w
 }
 
 // generate transactuion signature and print
 func fmtTransactionSignature(transation *wallet_domain.Transaction) common_domain.Signature {
-	fmt.Println(strings.Repeat(">", 75))
+	log.Println(strings.Repeat(">", 75))
 	tx := (*transation)
 	signature, _ := tx.GenerateSignature()
 	json, _ := json.MarshalIndent(tx, "", "  ")
-	fmt.Printf("Transaction: %s \nSignature: %s\n", string(json), signature) // it uses signature.String()
+	log.Printf("Transaction: %s \nSignature: %s\n", string(json), signature) // it uses signature.String()
 	return signature
 }
 

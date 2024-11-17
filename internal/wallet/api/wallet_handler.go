@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"os"
 	"path"
 	"path/filepath"
@@ -9,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 const (
@@ -30,11 +30,11 @@ type walletHandler struct {
 }
 
 func NewWalletHandler() WalletHandler {
-	templateDir, _ = TemplateDir()
+	templateDir = TemplateDir()
 	return &walletHandler{}
 }
 
-func TemplateDir() (string, error) {
+func TemplateDir() string {
 	if len(templateDir) == 0 {
 		mutex.Lock()
 		defer mutex.Unlock()
@@ -42,20 +42,22 @@ func TemplateDir() (string, error) {
 			// Get the directory of the executable
 			wdir, err := os.Getwd()
 			if err != nil {
-				return "", err
+				log.Error(err)
+				return ""
 			}
 			index := strings.Index(wdir, CMD_DIR)
 			if index == -1 {
 				index = strings.Index(wdir, INTERNAL_DIR)
 				if index == -1 {
-					return "", fmt.Errorf("cannot find %s or %s in %s", CMD_DIR, INTERNAL_DIR, wdir)
+					log.Errorf("cannot find %s or %s in %s", CMD_DIR, INTERNAL_DIR, wdir)
+					return ""
 				}
 			}
 			rootDir := wdir[:index]
 			templateDir = filepath.Join(rootDir, TEMPLATE_PATH)
 		}
 	}
-	return templateDir, nil
+	return templateDir
 }
 
 func (w *walletHandler) Index(c echo.Context) error {
