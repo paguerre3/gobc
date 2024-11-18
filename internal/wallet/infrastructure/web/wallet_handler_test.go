@@ -1,4 +1,4 @@
-package api
+package web
 
 import (
 	"net/http"
@@ -6,14 +6,14 @@ import (
 	"testing"
 
 	"github.com/labstack/echo/v4"
-	common_api "github.com/paguerre3/blockchain/internal/common/api"
+	common_web "github.com/paguerre3/blockchain/internal/common/infrastructure/web"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestWalletHandler(t *testing.T) {
 	// Create a test Echo instance
 	e := echo.New()
-	e.Renderer = common_api.NewTemplateRenderer(WALLET_TEMPLATES_PATH)
+	e.Renderer = common_web.NewTemplateRenderer(WALLET_TEMPLATES_PATH)
 
 	// Create a test WalletHandler instance
 	walletHandler := NewWalletHandler()

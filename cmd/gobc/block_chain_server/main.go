@@ -9,6 +9,7 @@ import (
 	block_chain_api "github.com/paguerre3/blockchain/internal/block_chain/api"
 	"github.com/paguerre3/blockchain/internal/block_chain/application"
 	common_api "github.com/paguerre3/blockchain/internal/common/api"
+	common_web "github.com/paguerre3/blockchain/internal/common/infrastructure/web"
 	wallet_app "github.com/paguerre3/blockchain/internal/wallet/application"
 )
 
@@ -33,11 +34,11 @@ func main() {
 	var wg sync.WaitGroup
 	for i := 0; i < MAX_BC_SERVERS; i++ {
 		wg.Add(1)
-		go func(port int) {
+		go func(portSufix int) {
 			defer wg.Done()
-			serverPort := fmt.Sprintf(":500%d", port)
+			serverPort := fmt.Sprintf(":500%d", portSufix)
 			// no gateway for blockChain servers:
-			common_api.NewServerNode("BlockChain", serverPort, "",
+			common_web.NewServerNode("BlockChain", serverPort, "",
 				registerBlockChainHandlers).InitAndRun()
 		}(i)
 	}
