@@ -466,5 +466,6 @@ The number of members required for consensus in a blockchain network depends on 
 - [GO Frameworks summary and GC](./docs/gofwks/README.md)
 - [Go Modular monoliths](./docs/modular_monoliths/README.md)
 - [HTTP Errors summary](./docs/http_errors/README.md)
+- [Dependency Injection and Middleware](https://github.com/justinas/alice)
 - [SDL](./docs/sdl/README.md)
 
