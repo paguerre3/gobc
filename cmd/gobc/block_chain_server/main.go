@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"sync"
 
 	"github.com/labstack/echo/v4"
 
@@ -11,10 +10,6 @@ import (
 	common_api "github.com/paguerre3/blockchain/internal/common/api"
 	common_web "github.com/paguerre3/blockchain/internal/common/infrastructure/web"
 	wallet_app "github.com/paguerre3/blockchain/internal/wallet/application"
-)
-
-const (
-	MAX_BC_SERVERS = 3
 )
 
 func registerBlockChainHandlers(e *echo.Echo, serverPort string) {
@@ -31,16 +26,9 @@ func registerBlockChainHandlers(e *echo.Echo, serverPort string) {
 }
 
 func main() {
-	var wg sync.WaitGroup
-	for i := 0; i < MAX_BC_SERVERS; i++ {
-		wg.Add(1)
-		go func(portSufix int) {
-			defer wg.Done()
-			serverPort := fmt.Sprintf(":500%d", portSufix)
-			// no gateway for blockChain servers:
-			common_web.NewServerNode("BlockChain", serverPort, "",
-				registerBlockChainHandlers).InitAndRun()
-		}(i)
-	}
-	wg.Wait()
+	portSuffix := 0
+	serverPort := fmt.Sprintf(":500%d", portSuffix)
+	// no gateway for blockChain servers:
+	common_web.NewServerNode("BlockChain", serverPort, "",
+		registerBlockChainHandlers).InitAndRun()
 }
