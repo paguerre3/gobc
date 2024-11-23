@@ -25,7 +25,7 @@ func NewWalletHandler() WalletHandler {
 }
 
 func (w *walletHandler) Contact(c echo.Context) error {
-	return c.Render(http.StatusOK, "index.html", hydrateYear())
+	return c.Render(http.StatusOK, "contact.html", hydrateYear())
 }
 
 func (w *walletHandler) Copyright(c echo.Context) error {

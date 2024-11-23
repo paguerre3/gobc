@@ -1,41 +1,51 @@
 import React, { useEffect, useState } from "react";
+import Header from './components/Header'
+import Container from "./components/Container";
+import Footer from './components/Footer'
+
 
 const App = () => {
-    const [year, setYear] = useState(null);
+    const [data, setData] = useState(null);
 
     useEffect(() => {
-        const copyrightApi = `${import.meta.env.VITE_WALLET_API_URL}/copyright`
-        console.log(copyrightApi)
-        fetch(copyrightApi)
-            .then((res) => {
-                console.log(res)
-                return res.json()
-            })
-            .then((data) => { 
-                console.log(data)
-                setYear(data.year ?? data.Year)
-            })
-            .catch((err) => console.error(err));
-    }, []);
+        async function fetchCopyright() {
+            const copyrightApi = `${import.meta.env.VITE_WALLET_API_URL}/copyright`
+        
+            // cached data (cleared every year or after local storage refresh)
+            const thisYear = new Date().getFullYear()
+            const localCopyrightCacheKey = `copyright-key-${thisYear}`
+            const cacheCopyrightItem = localStorage.getItem(localCopyrightCacheKey)
+            if (cacheCopyrightItem) {
+                const cachedCopyrightData = JSON.parse(cacheCopyrightItem)
+                setData(cachedCopyrightData)
+                console.log('Fetched Copyright Cache DATA:' + localCopyrightCacheKey + '\n', cachedCopyrightData)
+                return
+            }
+            const previousYear = thisYear - 1
+            const previousLocalCopyrightCacheKey = `copyright-key-${previousYear}`
+            localStorage.removeItem(previousLocalCopyrightCacheKey)
+        
+            try {
+                //console.log('copyright URL:', copyrightApi)
+                const res = await fetch (copyrightApi)
+                const newCopyrightData = await res.json()
+                localStorage.setItem(localCopyrightCacheKey, JSON.stringify(newCopyrightData))
+                setData(newCopyrightData)
+                console.log(`Fetched "new" Copyright API DATA: ${localCopyrightCacheKey} \n` , newCopyrightData)
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        fetchCopyright()
+    }, []); // empty array dependency means render only once on mount (page load)
 
     return (
         <>
-            <div className="header">
-                <h1>Welcome to Cami Wallet</h1>
-                <p>Elegant, Secure, and Stylish Wallets</p>
-            </div>
+            <Header />
 
-            <div className="container">
-                <div className="features">
-                    <h2>Why Choose Cami Wallet?</h2>
-                    <p>Discover the perfect blend of style and security with our Cami Wallets.</p>
-                </div>
-                <button className="button">Send</button>
-            </div>
+            <Container />
             
-            <footer>
-                © {year} Cami Wallet. All rights reserved.
-            </footer>
+            { data && <Footer data={data}/> }
         </>
     );
 };

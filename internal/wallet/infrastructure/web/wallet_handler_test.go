@@ -30,7 +30,7 @@ func TestWalletHandlerContact(t *testing.T) {
 	assert.Contains(t, rec.Header().Get("Content-Type"), "text/html")
 	strBody := rec.Body.String()
 	assert.Contains(t, strBody, "<!DOCTYPE html>")
-	assert.Contains(t, strBody, "<title>Cami Wallet</title>")
+	assert.Contains(t, strBody, "<title>Contact - Cami Wallet</title>")
 }
 
 func TestWalletHandlerYear(t *testing.T) {

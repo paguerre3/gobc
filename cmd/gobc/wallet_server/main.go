@@ -14,7 +14,10 @@ func registerWalletHandlers(e *echo.Echo, serverPort string) {
 
 	// Enable CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:5173"}, // React dev server URL
+		AllowOrigins: []string{
+			"http://localhost:5173", // React dev server URL
+			"http://localhost:4173", // Production
+		},
 		AllowMethods: []string{echo.GET, echo.POST},
 	}))
 

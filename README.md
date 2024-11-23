@@ -173,6 +173,7 @@ When you send a transaction on a blockchain, ECDSA:
 This combination of security and efficiency is why ECDSA is essential in blockchain technology, where performance and data integrity are critical.
 
 
+
 ---
 ## Blockchain address
 
@@ -214,6 +215,57 @@ go get github.com/btcsuite/btcutil/base58
 Creation of several **blockchain nodes**/web servers using different ports running on the same VM. 
 
 ![blockchain nodes](./assets/10_blockchain_web_servers.png)
+
+
+
+---
+## Running Wallet front-end
+
+Prerequisite: `Docker` not enabled for React frontend. 
+```bash
+cd website/wallet_frontend
+npm install
+#npm run build
+npm run dev
+```
+
+***Note: Wallet Frontend is pointing to Wallet APIs (backend), and Wallet APIs Gateway/is pointing to Blockchain APIs***
+
+To run React app in production mode, follow these steps:
+
+1. **Build the Production Bundle**:
+   Run the following command to generate the production-optimized build:
+   ```bash
+   npm run build
+   ```
+   This creates a `dist/` folder with your production-ready code.
+
+2. **Serve the Build**:
+   Use a static file server to serve the production build. For example:
+   - **Using `vite preview`**:
+     If you're using Vite, you can preview the production build with:
+     ```bash
+     npm run build
+     npm run preview
+     ```
+     This starts a server to serve the production build.
+
+   - **Using a different server**:
+     Use `echo`:
+     ```go
+         // Serve static files
+         e.Static("/", "website/wallet_frontend/dist")
+
+         // Handle React routing (fallback to index.html for non-static routes)
+         e.File("/*", "website/wallet_frontend/dist/index.html")
+     ```
+
+3. **Access Your App**:
+   Visit the URL printed in the terminal (usually `http://localhost:8080` or `http://localhost:4173`).
+
+**Now your app will run in production mode, and React's Strict Mode behavior (e.g., double `useEffect` execution for checking `Concurrency`) will no longer occur.**
+
+
 
 ---
 ## SAGA
