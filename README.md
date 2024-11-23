@@ -250,18 +250,8 @@ To run React app in production mode, follow these steps:
      ```
      This starts a server to serve the production build.
 
-   - **Using a different server**:
-     Use `echo`:
-     ```go
-         // Serve static files
-         e.Static("/", "website/wallet_frontend/dist")
-
-         // Handle React routing (fallback to index.html for non-static routes)
-         e.File("/*", "website/wallet_frontend/dist/index.html")
-     ```
-
 3. **Access Your App**:
-   Visit the URL printed in the terminal (usually `http://localhost:8080` or `http://localhost:4173`).
+   Visit the URL printed in the terminal (usually preview server on `http://localhost:4173`).
 
 **Now your app will run in production mode, and React's Strict Mode behavior (e.g., double `useEffect` execution for checking `Concurrency`) will no longer occur.**
 
