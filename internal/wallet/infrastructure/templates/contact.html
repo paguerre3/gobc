@@ -3,101 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact - Cami Wallet</title>
+    <title>Contact</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #fff;
-            color: #333;
+            --primary-color: #ff69b4;
+            --secondary-color: #ff1493;
+            --accent-color: #ffdee9;
+            --text-color: #333;
+            --font-family: 'Poppins', Arial, sans-serif;
+            --bg-gradient: linear-gradient(180deg, #ffe4e1, #fff);
+            font-family: var(--font-family);
+            background: var(--bg-gradient);
+            color: var(--text-color);
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
+
         .container {
             text-align: center;
             padding: 50px 20px;
+            animation: fadeInScale 0.8s ease-in-out;
         }
+
         .header {
-            background-color: #ffb6c1;
-            padding: 20px;
-            border-bottom: 3px solid #f9f3f4;
+            background: radial-gradient(circle, var(--primary-color), var(--secondary-color));
+            padding: 30px;
+            border-bottom: 5px solid var(--accent-color);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            border-radius: 0 0 30px 30px;
+            animation: slideInFromTop 1s ease-in-out;
         }
+
         .header h1 {
             color: #ffffff;
             font-size: 3em;
+            letter-spacing: 1.5px;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
         }
+
         .header p {
             color: #ffffff;
             font-size: 1.2em;
+            margin-top: 10px;
+            opacity: 0.9;
         }
-        .contact-container {
-            margin-top: 50px;
-            max-width: 600px;
-            margin: 50px auto;
-            text-align: left;
-        }
-        .contact-container h2 {
-            color: #ff69b4;
-            font-size: 2em;
-        }
-        .contact-container p {
-            color: #666;
-            line-height: 1.6;
-        }
+
         .button {
-            background-color: #ff69b4;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: #ffffff;
             border: none;
-            padding: 15px 30px;
-            text-transform: uppercase;
+            padding: 15px 35px;
             font-size: 1.2em;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 12px;
+            transition: all 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 20, 147, 0.4);
             cursor: pointer;
-            margin-top: 20px;
-            transition: background-color 0.3s ease;
         }
+
         .button:hover {
-            background-color: #ff1493;
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 20, 147, 0.5);
         }
-        footer {
-            background-color: #f9f3f4;
-            padding: 20px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            color: #333;
+
+        .features {
+            margin-top: 50px;
+            padding: 2rem;
+            background: var(--bg-gradient);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            gap: 2rem; /* Space between items */
             text-align: center;
+            transition: all 0.4s ease;
+            animation: fadeInUp 1s ease;
         }
+
+        .feature-item {
+            padding: 1rem;
+        }
+
+        .feature-item h2 {
+            margin: 0 0 0.5rem; /* Add space below the heading */
+            color: var(--primary-color);
+            font-size: 2.2em;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+            animation: bounceIn 1.5s ease;
+        }
+
+        .feature-item p {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.7;
+            word-break: break-word;
+            margin: 0;
+        }
+
+
+        .features:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        footer {
+            background: var(--accent-color);
+            padding: 20px;
+            text-align: center;
+            color: var(--text-color);
+            box-shadow: 0 -6px 15px rgba(0, 0, 0, 0.1);
+        }
+
         .coffee-link {
-            color: #ff69b4;
+            color: var(--primary-color);
             text-decoration: none;
             font-weight: bold;
         }
+
         .coffee-link:hover {
             text-decoration: underline;
+            color: var(--secondary-color);
+        }
+
+        /* Animations */
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInFromTop {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Contact Cami Wallet</h1>
-        <p>Your elegant, secure, and stylish wallet solution</p>
+        <h1>Contact</h1>
+        <p>Secure and stylish crypto wallet solution</p>
     </div>
 
     <div class="container">
-        <div class="contact-container">
-            <h2>Get in Touch</h2>
-            <p>We would love to hear from you! Whether you have a question about our wallets, need support, or just want to say hi, feel free to reach out.</p>
-            
-            <h3>Contact Information</h3>
-            <p><strong>Email:</strong> support@camiwallet.com</p>
-            <p><strong>Phone:</strong> +54 9 (351) 7603738</p>
-            
-            <h3>Support the Creator</h3>
-            <p>If you love our work and want to support us, consider <a href="https://buymeacoffee.com/pabloaguer8" class="coffee-link">buying me a coffee!</a></p>
+        <div class="features">
+            <div class="feature-item">
+                <h2>Get in touch</h2>
+                <p>We would love to hear from you! Whether you have a question about our wallets, need support, or just want to say hi, feel free to reach out.</p>
+            </div>
+        
+            <div class="feature-item">
+                <h2>Contact information</h2>
+                <p><strong>support@cami-wallet.com<br>+54 9 (351) 7603738</strong></p>
+            </div>
+        
+            <div class="feature-item">
+                <h2>Support the creator</h2>
+                <p>If you love our work and want to support us, consider <a href="https://buymeacoffee.com/pabloaguer8" class="coffee-link">buying me a coffee!</a></p>
+            </div>
         </div>
     </div>
     
     <footer>
-        © {{.Year}} Cami Wallet. All rights reserved.
+        © {{.Year}} Cami Wallet. All rights reserved. Powered by <a href="https://buymeacoffee.com/pabloaguer8" target="_blank" rel="noopener noreferrer">PA</a>.
     </footer>
 </body>
 </html>
