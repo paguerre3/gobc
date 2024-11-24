@@ -7,10 +7,14 @@ import (
 	"testing"
 
 	"github.com/labstack/echo/v4"
+	"github.com/paguerre3/blockchain/configs"
 	common_app "github.com/paguerre3/blockchain/internal/common/application"
-	common_domain "github.com/paguerre3/blockchain/internal/common/domain"
 	wallet_app "github.com/paguerre3/blockchain/internal/wallet/application"
 	"github.com/stretchr/testify/assert"
+)
+
+var (
+	config = configs.Instance()
 )
 
 func TestWalletHandlerCopyright(t *testing.T) {
@@ -18,7 +22,7 @@ func TestWalletHandlerCopyright(t *testing.T) {
 	e := echo.New()
 
 	getCopyrightUseCase := common_app.NewGetCopyrightUseCase()
-	getWalletUseCase := wallet_app.NewGetWalletUseCase(common_domain.TEST_SERVER_PORT)
+	getWalletUseCase := wallet_app.NewGetWalletUseCase(config.TestServerPort())
 	// Create a test WalletHandler instance
 	walletHandler := NewWalletHandler(getCopyrightUseCase, getWalletUseCase)
 
@@ -34,5 +38,5 @@ func TestWalletHandlerCopyright(t *testing.T) {
 	var data map[string]interface{}
 	err = json.Unmarshal(rec.Body.Bytes(), &data)
 	assert.NoError(t, err)
-	assert.Equal(t, float64(common_app.WALLET_COPYRIGHT_YEAR), data["year"])
+	assert.Equal(t, float64(config.WalletCopyrightYear()), data["year"])
 }

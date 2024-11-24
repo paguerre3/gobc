@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
+	"github.com/paguerre3/blockchain/configs"
 	block_chain_api "github.com/paguerre3/blockchain/internal/block_chain/api"
 	"github.com/paguerre3/blockchain/internal/block_chain/application"
 	common_api "github.com/paguerre3/blockchain/internal/common/api"
@@ -12,12 +13,16 @@ import (
 	wallet_app "github.com/paguerre3/blockchain/internal/wallet/application"
 )
 
+var (
+	config = configs.Instance()
+)
+
 func registerBlockChainHandlers(e *echo.Echo, serverPort string, gateway string) {
 	// Use cases
 	getWalletUseCase := wallet_app.NewGetWalletUseCase(serverPort) // TODO: use walletServerPort
 	wallet, _ := getWalletUseCase.Instance()
 	getBlockChainUseCase := application.NewGetBlockChainUseCase(wallet,
-		serverPort, false)
+		serverPort, config.CheckFunds())
 
 	// Handlers
 	blockChainApi := block_chain_api.NewBlockChainHandler(getBlockChainUseCase)

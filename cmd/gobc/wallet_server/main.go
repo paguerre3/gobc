@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/paguerre3/blockchain/configs"
 	common_api "github.com/paguerre3/blockchain/internal/common/api"
 	common_app "github.com/paguerre3/blockchain/internal/common/application"
 	common_web "github.com/paguerre3/blockchain/internal/common/infrastructure/web"
@@ -13,14 +14,18 @@ import (
 	wallet_web "github.com/paguerre3/blockchain/internal/wallet/infrastructure/web"
 )
 
+var (
+	config = configs.Instance()
+)
+
 func registerWalletHandlers(e *echo.Echo, serverPort string, gateway string) {
-	e.Renderer = common_web.NewTemplateRenderer(wallet_web.WALLET_TEMPLATES_PATH)
+	e.Renderer = common_web.NewTemplateRenderer(config.WalletTemplatesDir())
 
 	// Enable CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{
-			"http://localhost:5173", // React dev server URL
-			"http://localhost:4173", // Production
+			config.WalletFrontendDevServer(),  // React dev server URL
+			config.WalletFrontendProdServer(), // Production
 		},
 		AllowMethods: []string{echo.GET, echo.POST},
 	}))

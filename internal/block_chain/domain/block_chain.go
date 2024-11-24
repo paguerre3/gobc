@@ -9,16 +9,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/paguerre3/blockchain/configs"
 	common_domain "github.com/paguerre3/blockchain/internal/common/domain"
 )
 
-const (
-	GENESSIS_SENDER_ADDRESS        = "genesis_sender_address"
-	GENESSIS_RECIPIENT_ADDRESS     = "genesis_recipient_address"
-	MINING_DIFFICULTY              = 3                                      // increasing difficulty means more time for guessing Nonce, e.g. 4 is arround 10 minutes or more
-	MINING_SENDER_ADDRESS          = "THE_BLOCKCHAIN_MINING_SENDER_ADDRESS" // block chain mining server address that "sends" rewards
-	MINING_REWARD                  = 1.0
-	MY_BLOCK_CHAIN_RECEIPT_ADDRESS = "MY_BLOCKCHAIN_RECEIPT_ADDRESS_TO_OBTAIN_MINING_REWARD" // address for receiving mining rewards
+var (
+	config = configs.Instance()
 )
 
 type BlockChain interface {
@@ -58,7 +54,7 @@ func NewBlockchain(blockChainAddressOfRewardRecipient string, checkFunds bool, s
 	bc.serverPort = serverPort
 	// add genesis transactions to blockchain Pool
 	// (the is no need of passing public key and signature for the genesis transaction scenario):
-	bc.CreateAppendTransaction(GENESSIS_SENDER_ADDRESS, GENESSIS_RECIPIENT_ADDRESS, 0, nil, nil, nil)
+	bc.CreateAppendTransaction(config.GenesisSenderAddress(), config.GenesisRecipientAddress(), 0, nil, nil, nil)
 	bc.CreateAppendBlock(0, emptyBlock.Hash()) // transfer transacton "pool" from blockhain to new block and empty it
 	return bc
 }
@@ -99,7 +95,7 @@ func (bc *blockChain) LastBlock() Block {
 func (bc *blockChain) CreateAppendTransaction(senderAddress string, recipientAddress string, amount float64, timeStamp *time.Time,
 	senderPublicKey *ecdsa.PublicKey, signature common_domain.Signature) (Transaction, error) {
 	t := newTransaction(senderAddress, recipientAddress, amount, timeStamp)
-	if senderAddress == MINING_SENDER_ADDRESS || senderAddress == GENESSIS_SENDER_ADDRESS {
+	if senderAddress == config.MinigSenderAddress() || senderAddress == config.GenesisSenderAddress() {
 		// this is a transaction for reward so there is no need to verify the signature
 		// (also, there is no need to verify a genesis transaction case)
 		bc.transactionPool = append(bc.transactionPool, t)
@@ -149,7 +145,7 @@ func (bc *blockChain) ProofOfWork() int {
 	transactions := bc.CopyTransactionPool()
 	previousHash := bc.LastBlock().Hash()
 	nonce := 0
-	for !bc.IsValidProof(nonce, previousHash, transactions, MINING_DIFFICULTY) {
+	for !bc.IsValidProof(nonce, previousHash, transactions, config.MiningDifficulty()) {
 		nonce++
 	}
 	return nonce
@@ -158,7 +154,7 @@ func (bc *blockChain) ProofOfWork() int {
 func (bc *blockChain) Mining() bool {
 	// The blockChainn sender sends rewards to the blockChain address because of successfull mining
 	// (no nee to pass public key and signature for "rewards" scenario):
-	bc.CreateAppendTransaction(MINING_SENDER_ADDRESS, bc.BlockChainAddressOfRewardRecipient(), MINING_REWARD, nil, nil, nil)
+	bc.CreateAppendTransaction(config.MinigSenderAddress(), bc.BlockChainAddressOfRewardRecipient(), config.MiningReward(), nil, nil, nil)
 	nonce := bc.ProofOfWork()
 	var b *Block = nil
 	if nonce > 0 {

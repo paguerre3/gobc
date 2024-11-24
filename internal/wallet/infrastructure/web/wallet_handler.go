@@ -7,10 +7,6 @@ import (
 	common_app "github.com/paguerre3/blockchain/internal/common/application"
 )
 
-const (
-	WALLET_TEMPLATES_PATH = "internal/wallet/infrastructure/templates"
-)
-
 type WalletHandler interface {
 	Contact(c echo.Context) error
 }

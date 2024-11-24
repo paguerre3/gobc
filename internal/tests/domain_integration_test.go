@@ -7,14 +7,19 @@ import (
 
 	"testing"
 
+	"github.com/paguerre3/blockchain/configs"
 	"github.com/paguerre3/blockchain/internal/block_chain/domain"
 	common_domain "github.com/paguerre3/blockchain/internal/common/domain"
 	wallet_domain "github.com/paguerre3/blockchain/internal/wallet/domain"
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	config = configs.Instance()
+)
+
 func newBlockChainWithFmt(checkFunds bool) func() domain.BlockChain {
-	bc := domain.NewBlockchain(domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS, checkFunds, common_domain.TEST_SERVER_PORT)
+	bc := domain.NewBlockchain(config.MyBlockChainRecipientAddres(), checkFunds, config.TestServerPort())
 	return func() domain.BlockChain {
 		log.Println(strings.Repeat("#", 75))
 		json, _ := json.MarshalIndent(bc, "", "  ")
@@ -98,7 +103,7 @@ func toggleBlockChainIntegration(checkFunds bool) (float64, float64, float64, fl
 	t2 := fmtTransactionTotal(&blockChain, walletB.BlockChainAddress())
 	t3 := fmtTransactionTotal(&blockChain, walletC.BlockChainAddress())
 	t4 := fmtTransactionTotal(&blockChain, walletD.BlockChainAddress())
-	t5 := fmtTransactionTotal(&blockChain, domain.MY_BLOCK_CHAIN_RECEIPT_ADDRESS) // check rewards
+	t5 := fmtTransactionTotal(&blockChain, config.MyBlockChainRecipientAddres()) // check rewards
 	return t1, t2, t3, t4, t5
 }
 

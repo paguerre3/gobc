@@ -1,7 +1,9 @@
 package application
 
-const (
-	WALLET_COPYRIGHT_YEAR = 2022
+import "github.com/paguerre3/blockchain/configs"
+
+var (
+	config = configs.Instance()
 )
 
 type PageData struct {
@@ -20,5 +22,5 @@ func NewGetCopyrightUseCase() GetCopyrightUseCase {
 }
 
 func (g *getCopyrightUseCase) GetCopyright() *PageData {
-	return &PageData{Year: WALLET_COPYRIGHT_YEAR}
+	return &PageData{Year: config.WalletCopyrightYear()}
 }

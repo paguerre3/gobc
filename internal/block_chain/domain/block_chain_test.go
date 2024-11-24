@@ -11,30 +11,30 @@ import (
 )
 
 func TestNewBlockchain(t *testing.T) {
-	address := MY_BLOCK_CHAIN_RECEIPT_ADDRESS
-	bc := NewBlockchain(address, false, common_domain.TEST_SERVER_PORT) // moves genesis transaction from transaction pool to latest block then empty transactyiomn pool.TEST_SERVER_PORT)
+	address := config.MyBlockChainRecipientAddres()
+	bc := NewBlockchain(address, false, config.TestServerPort()) // moves genesis transaction from transaction pool to latest block then empty transactyiomn pool.TEST_SERVER_PORT)
 
 	assert.NotNil(t, bc)
 	assert.Empty(t, bc.TransactionPool())
 	assert.Len(t, bc.Chain(), 1)
 	assert.Equal(t, address, bc.BlockChainAddressOfRewardRecipient())
 	assert.False(t, bc.CheckFunds())
-	assert.Equal(t, common_domain.TEST_SERVER_PORT, bc.ServerPort())
+	assert.Equal(t, config.TestServerPort(), bc.ServerPort())
 }
 
 func TestBlockchainCreateAppendBlock(t *testing.T) {
-	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS, false, common_domain.TEST_SERVER_PORT)
+	bc := NewBlockchain(config.MyBlockChainRecipientAddres(), false, config.TestServerPort())
 
 	block := bc.CreateAppendBlock(1, [32]byte{})
 
 	assert.NotNil(t, block)
 	assert.Len(t, bc.Chain(), 2)
 	assert.Empty(t, bc.TransactionPool())
-	assert.Equal(t, MY_BLOCK_CHAIN_RECEIPT_ADDRESS, bc.BlockChainAddressOfRewardRecipient())
+	assert.Equal(t, config.MyBlockChainRecipientAddres(), bc.BlockChainAddressOfRewardRecipient())
 }
 
 func TestBlockchainLastBlock(t *testing.T) {
-	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS, false, common_domain.TEST_SERVER_PORT)
+	bc := NewBlockchain(config.MyBlockChainRecipientAddres(), false, config.TestServerPort())
 
 	lastBlock := bc.LastBlock()
 
@@ -42,7 +42,7 @@ func TestBlockchainLastBlock(t *testing.T) {
 }
 
 func TestBlockchainCreateAppendTransaction(t *testing.T) {
-	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS, false, common_domain.TEST_SERVER_PORT) // moves genesis transaction from transaction pool to latest block then empty transactyiomn pool
+	bc := NewBlockchain(config.MyBlockChainRecipientAddres(), false, config.TestServerPort()) // moves genesis transaction from transaction pool to latest block then empty transactyiomn pool
 	assert.Empty(t, bc.TransactionPool())
 	assert.Len(t, bc.Chain(), 1)
 	b := bc.Chain()[0]
@@ -61,7 +61,7 @@ func TestBlockchainCreateAppendTransaction(t *testing.T) {
 }
 
 func TestBlockchainCreateAppendTransactionCheckingFunds(t *testing.T) {
-	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS, true, common_domain.TEST_SERVER_PORT) // moves genesis transaction from transaction pool to latest block then empty transactyiomn pool
+	bc := NewBlockchain(config.MyBlockChainRecipientAddres(), true, config.TestServerPort()) // moves genesis transaction from transaction pool to latest block then empty transactyiomn pool
 	assert.Empty(t, bc.TransactionPool())
 	assert.Len(t, bc.Chain(), 1)
 	b := bc.Chain()[0]
@@ -81,7 +81,7 @@ func TestBlockchainCreateAppendTransactionCheckingFunds(t *testing.T) {
 }
 
 func TestBlockchainMarshalJSON(t *testing.T) {
-	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS, false, common_domain.TEST_SERVER_PORT)
+	bc := NewBlockchain(config.MyBlockChainRecipientAddres(), false, config.TestServerPort())
 	assert.Empty(t, bc.TransactionPool())
 
 	jsonBytes, err := json.Marshal(bc)
@@ -95,14 +95,14 @@ func TestBlockchainMarshalJSON(t *testing.T) {
 }
 
 func TestBlockchainTransactionPool(t *testing.T) {
-	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS, false, common_domain.TEST_SERVER_PORT) // moves genesis transaction from transaction pool to latest block then empty transaction pool
+	bc := NewBlockchain(config.MyBlockChainRecipientAddres(), false, config.TestServerPort()) // moves genesis transaction from transaction pool to latest block then empty transaction pool
 	assert.Empty(t, bc.TransactionPool())
 	assert.Len(t, bc.Chain(), 1)
 	b := bc.Chain()[0]
 	assert.Len(t, b.Transactions(), 1)
 	tx := b.Transactions()[0]
-	assert.Equal(t, GENESSIS_SENDER_ADDRESS, tx.SenderAddress())
-	assert.Equal(t, GENESSIS_RECIPIENT_ADDRESS, tx.RecipientAddress())
+	assert.Equal(t, config.GenesisSenderAddress(), tx.SenderAddress())
+	assert.Equal(t, config.GenesisRecipientAddress(), tx.RecipientAddress())
 
 	wallet := wallet_domain.NewWallet()
 	wtx := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver1", 10.99)
@@ -126,7 +126,7 @@ func TestBlockchainTransactionPool(t *testing.T) {
 }
 
 func TestBlockchainChain(t *testing.T) {
-	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS, false, common_domain.TEST_SERVER_PORT)
+	bc := NewBlockchain(config.MyBlockChainRecipientAddres(), false, config.TestServerPort())
 
 	bc.CreateAppendBlock(1, [32]byte{})
 	bc.CreateAppendBlock(2, [32]byte{})
@@ -137,7 +137,7 @@ func TestBlockchainChain(t *testing.T) {
 }
 
 func TestIsValidProof(t *testing.T) {
-	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS, false, common_domain.TEST_SERVER_PORT)
+	bc := NewBlockchain(config.MyBlockChainRecipientAddres(), false, config.TestServerPort())
 	previousHash := bc.LastBlock().Hash()
 	nonce := 0
 	difficulty := 2 // find only 2 leading zeros for a really fast proof:
@@ -151,7 +151,7 @@ func TestIsValidProof(t *testing.T) {
 }
 
 func TestProofOfWork(t *testing.T) {
-	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS, false, common_domain.TEST_SERVER_PORT)
+	bc := NewBlockchain(config.MyBlockChainRecipientAddres(), false, config.TestServerPort())
 	// default difficulty level is set to "3" so the proof of work should be > 0
 	// and it'll be found relatively quickly:
 	proof := bc.ProofOfWork() // proof of work returns nonce, i.e. proof == nonce with leading zeros according tio the difficulty
@@ -159,7 +159,7 @@ func TestProofOfWork(t *testing.T) {
 }
 
 func TestBlockchainMining(t *testing.T) {
-	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS, false, common_domain.TEST_SERVER_PORT)
+	bc := NewBlockchain(config.MyBlockChainRecipientAddres(), false, config.TestServerPort())
 
 	// Call the Mining method
 	miningSuccess := bc.Mining()
@@ -183,7 +183,7 @@ func TestBlockchainMining(t *testing.T) {
 }
 
 func TestBlockchainCalculateTransactionTotal(t *testing.T) {
-	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS, false, common_domain.TEST_SERVER_PORT)
+	bc := NewBlockchain(config.MyBlockChainRecipientAddres(), false, config.TestServerPort())
 
 	wallet1 := wallet_domain.NewWallet()
 	wtx1 := wallet_domain.NewTransaction(wallet1.PrivateKey(), wallet1.BlockChainAddress(), "receiver1", 10.99)
@@ -225,7 +225,7 @@ func TestBlockchainCalculateTransactionTotal(t *testing.T) {
 
 func TestVerifyTransactionSignature(t *testing.T) {
 	// Create a test blockchain
-	bc := NewBlockchain(MY_BLOCK_CHAIN_RECEIPT_ADDRESS, false, common_domain.TEST_SERVER_PORT)
+	bc := NewBlockchain(config.MyBlockChainRecipientAddres(), false, config.TestServerPort())
 
 	// Create a test transaction
 	wallet := wallet_domain.NewWallet()

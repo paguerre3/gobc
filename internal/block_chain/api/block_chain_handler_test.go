@@ -4,22 +4,28 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/labstack/echo/v4"
+	"github.com/paguerre3/blockchain/configs"
 	"github.com/paguerre3/blockchain/internal/block_chain/application"
-	common_domain "github.com/paguerre3/blockchain/internal/common/domain"
 	wallet_app "github.com/paguerre3/blockchain/internal/wallet/application"
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	config = configs.Instance()
+)
+
 func TestBlockChainHandler(t *testing.T) {
 	// Create a test GetBlockChainUseCase instance
-	serverPort := common_domain.TEST_SERVER_PORT
-	getWalletUseCase := wallet_app.NewGetWalletUseCase(serverPort) // TODO: replace with walletServerPort
+	walletServerPort := config.TestServerPort()
+	blockChainServerPort := strings.ReplaceAll(walletServerPort, "0", "1")
+	getWalletUseCase := wallet_app.NewGetWalletUseCase(walletServerPort)
 	wallet, _ := getWalletUseCase.Instance()
 	getBlockChainUseCase := application.NewGetBlockChainUseCase(wallet,
-		serverPort, false)
+		blockChainServerPort, false)
 
 	// Create a test BlockChainHandler instance
 	bch := NewBlockChainHandler(getBlockChainUseCase)

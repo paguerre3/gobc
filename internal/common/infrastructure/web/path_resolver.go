@@ -7,11 +7,11 @@ import (
 	"sync"
 
 	"github.com/labstack/gommon/log"
+	"github.com/paguerre3/blockchain/configs"
 )
 
-const (
-	CMD_DIR      = "/cmd/"
-	INTERNAL_DIR = "/internal/"
+var (
+	config = configs.Instance()
 )
 
 func NewPathResolver() func(string) string {
@@ -28,11 +28,11 @@ func NewPathResolver() func(string) string {
 				log.Error(err)
 				return
 			}
-			index := strings.Index(wdir, CMD_DIR)
+			index := strings.Index(wdir, config.CmdDir())
 			if index == -1 {
-				index = strings.Index(wdir, INTERNAL_DIR)
+				index = strings.Index(wdir, config.InternalDir())
 				if index == -1 {
-					log.Errorf("cannot find %s or %s in %s", CMD_DIR, INTERNAL_DIR, wdir)
+					log.Errorf("cannot find %s or %s in %s", config.CmdDir(), config.InternalDir(), wdir)
 					return
 				}
 			}
