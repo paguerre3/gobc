@@ -12,10 +12,11 @@ import (
 	wallet_app "github.com/paguerre3/blockchain/internal/wallet/application"
 )
 
-func registerBlockChainHandlers(e *echo.Echo, serverPort string) {
+func registerBlockChainHandlers(e *echo.Echo, serverPort string, gateway string) {
 	// Use cases
-	getWalletUseCase := wallet_app.NewGetWalletUseCase(serverPort)
-	getBlockChainUseCase := application.NewGetBlockChainUseCase(getWalletUseCase.Instance(),
+	getWalletUseCase := wallet_app.NewGetWalletUseCase(serverPort) // TODO: use walletServerPort
+	wallet, _ := getWalletUseCase.Instance()
+	getBlockChainUseCase := application.NewGetBlockChainUseCase(wallet,
 		serverPort, false)
 
 	// Handlers

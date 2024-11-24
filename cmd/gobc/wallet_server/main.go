@@ -9,10 +9,11 @@ import (
 	common_app "github.com/paguerre3/blockchain/internal/common/application"
 	common_web "github.com/paguerre3/blockchain/internal/common/infrastructure/web"
 	wallet_api "github.com/paguerre3/blockchain/internal/wallet/api"
+	wallet_app "github.com/paguerre3/blockchain/internal/wallet/application"
 	wallet_web "github.com/paguerre3/blockchain/internal/wallet/infrastructure/web"
 )
 
-func registerWalletHandlers(e *echo.Echo, serverPort string) {
+func registerWalletHandlers(e *echo.Echo, serverPort string, gateway string) {
 	e.Renderer = common_web.NewTemplateRenderer(wallet_web.WALLET_TEMPLATES_PATH)
 
 	// Enable CORS
@@ -29,8 +30,10 @@ func registerWalletHandlers(e *echo.Echo, serverPort string) {
 	walletPage := wallet_web.NewWalletHandler(getCopyrightUseCase)
 	e.GET("/contact", walletPage.Contact)
 
-	walletApi := wallet_api.NewWalletHandler(getCopyrightUseCase)
-	e.GET("/copyright", walletApi.Copyright)
+	getWalletUseCase := wallet_app.NewGetWalletUseCase(serverPort)
+	walletApi := wallet_api.NewWalletHandler(getCopyrightUseCase, getWalletUseCase)
+	e.GET("/copyright", walletApi.GetCopyright)
+	e.GET("/wallet", walletApi.GetWallet)
 	e.GET("/ping", common_api.Ping)
 }
 

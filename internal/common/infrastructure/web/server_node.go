@@ -13,11 +13,11 @@ type serverNode struct {
 	name             string
 	serverPort       string
 	gateway          string
-	registerHandlers func(e *echo.Echo, serverPort string)
+	registerHandlers func(e *echo.Echo, serverPort string, gateway string)
 }
 
 func NewServerNode(name, serverPort string, gateway string,
-	registerHandlers func(e *echo.Echo, serverPort string)) ServerNode {
+	registerHandlers func(e *echo.Echo, serverPort string, gateway string)) ServerNode {
 	return &serverNode{
 		name:             name,
 		serverPort:       serverPort,
@@ -36,7 +36,7 @@ func (s *serverNode) InitAndRun() {
 	}
 
 	// Pass echo server instance and port
-	s.registerHandlers(e, s.serverPort)
+	s.registerHandlers(e, s.serverPort, s.gateway)
 
 	// Start the server on the specified port
 	e.Start(s.serverPort)

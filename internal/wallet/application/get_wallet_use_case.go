@@ -12,7 +12,7 @@ var (
 )
 
 type GetWalletUseCase interface {
-	Instance() domain.Wallet
+	Instance() (domain.Wallet, bool)
 }
 
 type getWalletUseCase struct {
@@ -25,7 +25,7 @@ func NewGetWalletUseCase(serverPort string) GetWalletUseCase {
 	}
 }
 
-func (gwc *getWalletUseCase) Instance() domain.Wallet {
+func (gwc *getWalletUseCase) Instance() (domain.Wallet, bool) {
 	wallet, ok := walletCache[gwc.serverPort]
 	if !ok {
 		mutex.Lock()
@@ -36,5 +36,5 @@ func (gwc *getWalletUseCase) Instance() domain.Wallet {
 			walletCache[gwc.serverPort] = wallet
 		}
 	}
-	return wallet
+	return wallet, ok
 }

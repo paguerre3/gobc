@@ -16,8 +16,9 @@ import (
 func TestBlockChainHandler(t *testing.T) {
 	// Create a test GetBlockChainUseCase instance
 	serverPort := common_domain.TEST_SERVER_PORT
-	getWalletUseCase := wallet_app.NewGetWalletUseCase(serverPort)
-	getBlockChainUseCase := application.NewGetBlockChainUseCase(getWalletUseCase.Instance(),
+	getWalletUseCase := wallet_app.NewGetWalletUseCase(serverPort) // TODO: replace with walletServerPort
+	wallet, _ := getWalletUseCase.Instance()
+	getBlockChainUseCase := application.NewGetBlockChainUseCase(wallet,
 		serverPort, false)
 
 	// Create a test BlockChainHandler instance
