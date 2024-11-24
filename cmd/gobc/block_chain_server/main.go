@@ -21,7 +21,6 @@ func registerBlockChainHandlers(e *echo.Echo, serverPort string) {
 	// Handlers
 	blockChainApi := block_chain_api.NewBlockChainHandler(getBlockChainUseCase)
 	e.GET("/block-chain", blockChainApi.GetBlockChain)
-
 	e.GET("/ping", common_api.Ping)
 }
 

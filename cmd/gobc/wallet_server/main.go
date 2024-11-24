@@ -5,7 +5,10 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	common_api "github.com/paguerre3/blockchain/internal/common/api"
+	common_app "github.com/paguerre3/blockchain/internal/common/application"
 	common_web "github.com/paguerre3/blockchain/internal/common/infrastructure/web"
+	wallet_api "github.com/paguerre3/blockchain/internal/wallet/api"
 	wallet_web "github.com/paguerre3/blockchain/internal/wallet/infrastructure/web"
 )
 
@@ -22,9 +25,13 @@ func registerWalletHandlers(e *echo.Echo, serverPort string) {
 	}))
 
 	// handlers
-	walletApi := wallet_web.NewWalletHandler()
-	e.GET("/contact", walletApi.Contact)
+	getCopyrightUseCase := common_app.NewGetCopyrightUseCase()
+	walletPage := wallet_web.NewWalletHandler(getCopyrightUseCase)
+	e.GET("/contact", walletPage.Contact)
+
+	walletApi := wallet_api.NewWalletHandler(getCopyrightUseCase)
 	e.GET("/copyright", walletApi.Copyright)
+	e.GET("/ping", common_api.Ping)
 }
 
 func main() {

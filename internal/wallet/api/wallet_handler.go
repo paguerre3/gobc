@@ -1,4 +1,4 @@
-package web
+package api
 
 import (
 	"net/http"
@@ -7,12 +7,8 @@ import (
 	common_app "github.com/paguerre3/blockchain/internal/common/application"
 )
 
-const (
-	WALLET_TEMPLATES_PATH = "internal/wallet/infrastructure/templates"
-)
-
 type WalletHandler interface {
-	Contact(c echo.Context) error
+	Copyright(c echo.Context) error
 }
 
 type walletHandler struct {
@@ -23,6 +19,6 @@ func NewWalletHandler(getCopyrightUseCase common_app.GetCopyrightUseCase) Wallet
 	return &walletHandler{getCopyrightUseCase: getCopyrightUseCase}
 }
 
-func (w *walletHandler) Contact(c echo.Context) error {
-	return c.Render(http.StatusOK, "contact.html", w.getCopyrightUseCase.GetCopyright())
+func (w *walletHandler) Copyright(c echo.Context) error {
+	return c.JSON(http.StatusOK, w.getCopyrightUseCase.GetCopyright())
 }

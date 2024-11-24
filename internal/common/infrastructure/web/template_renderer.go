@@ -12,10 +12,6 @@ var (
 	templatesPathResolver = NewPathResolver()
 )
 
-type PageData struct {
-	Year int
-}
-
 type TemplateRenderer interface {
 	Render(w io.Writer, name string, data any, c echo.Context) error
 }
