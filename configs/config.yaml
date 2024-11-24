@@ -1,0 +1,15 @@
+test:
+  serverPort: ":0000"
+blockChain: 
+  genesisSenderAddress: "genesis_sender_address"
+  genesisRecipientAddress: "genesis_recipient_address"
+  miningDifficulty: 3
+  miningSenderAddress: "THE_BLOCKCHAIN_MINING_SENDER_ADDRESS"
+  miningReward: 1.0
+  myBlockChainRecipientAddress: "MY_BLOCKCHAIN_RECIPIENT_ADDRESS_TO_OBTAIN_MINING_REWARD"
+  checkFunds: false
+wallet:
+  frontendDevServer: "http://localhost:5173"
+  frontendProdServer: "http://localhost:4173"
+  copyrightYear: 2022
+  templatesDir: "internal/wallet/infrastructure/templates"

@@ -21,6 +21,4 @@ func TestConfigs(t *testing.T) {
 	assert.Equal(t, "http://localhost:4173", config.WalletFrontendProdServer())
 	assert.Equal(t, 2022, config.WalletCopyrightYear())
 	assert.Equal(t, "internal/wallet/infrastructure/templates", config.WalletTemplatesDir())
-	assert.Equal(t, "/cmd/", config.CmdDir())
-	assert.Equal(t, "/internal/", config.InternalDir())
 }
