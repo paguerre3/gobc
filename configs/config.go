@@ -18,6 +18,7 @@ var (
 type Config interface {
 	TestServerPort() string
 
+	BlockChainServerPort() string
 	GenesisSenderAddress() string
 	GenesisRecipientAddress() string
 	MiningDifficulty() int      // increasing difficulty means more time for guessing Nonce, e.g. 4=0000 is arround 10 minutes or more
@@ -26,6 +27,8 @@ type Config interface {
 	MyBlockChainRecipientAddres() string // address for receiving mining rewards
 	CheckFunds() bool                    // enable for prod mode, i.e. to avoid sending money without founds
 
+	WalletServerPort() string
+	WalletGateway() string
 	WalletFrontendDevServer() string
 	WalletFrontendProdServer() string
 	WalletCopyrightYear() int
@@ -37,6 +40,7 @@ type config struct {
 		ServerPort string `yaml:"serverPort"`
 	} `yaml:"test"`
 	BlockChain struct {
+		ServerPort                   string  `yaml:"serverPort"`
 		GenesisSenderAddress         string  `yaml:"genesisSenderAddress"`
 		GenesisRecipientAddress      string  `yaml:"genesisRecipientAddress"`
 		MiningDifficulty             int     `yaml:"miningDifficulty"`
@@ -46,6 +50,8 @@ type config struct {
 		CheckFunds                   bool    `yaml:"checkFunds"`
 	} `yaml:"blockChain"`
 	Wallet struct {
+		ServerPort         string `yaml:"serverPort"`
+		Gateway            string `yaml:"gateway"`
 		FrontendDevServer  string `yaml:"frontendDevServer"`
 		FrontendProdServer string `yaml:"frontendProdServer"`
 		CopyrightYear      int    `yaml:"copyrightYear"`
@@ -79,6 +85,10 @@ func (c *config) TestServerPort() string {
 	return c.Test.ServerPort
 }
 
+func (c *config) BlockChainServerPort() string {
+	return c.BlockChain.ServerPort
+}
+
 func (c *config) GenesisSenderAddress() string {
 	return c.BlockChain.GenesisSenderAddress
 }
@@ -105,6 +115,14 @@ func (c *config) MyBlockChainRecipientAddres() string {
 
 func (c *config) CheckFunds() bool {
 	return c.BlockChain.CheckFunds
+}
+
+func (c *config) WalletServerPort() string {
+	return c.Wallet.ServerPort
+}
+
+func (c *config) WalletGateway() string {
+	return c.Wallet.Gateway
 }
 
 func (c *config) WalletFrontendDevServer() string {

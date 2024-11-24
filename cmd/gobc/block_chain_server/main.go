@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/labstack/echo/v4"
 
 	"github.com/paguerre3/blockchain/configs"
@@ -19,7 +17,7 @@ var (
 
 func registerBlockChainHandlers(e *echo.Echo, serverPort string, gateway string) {
 	// Use cases
-	getWalletUseCase := wallet_app.NewGetWalletUseCase(serverPort) // TODO: use walletServerPort
+	getWalletUseCase := wallet_app.NewGetWalletUseCase(config.WalletServerPort())
 	wallet, _ := getWalletUseCase.Instance()
 	getBlockChainUseCase := application.NewGetBlockChainUseCase(wallet,
 		serverPort, config.CheckFunds())
@@ -31,9 +29,7 @@ func registerBlockChainHandlers(e *echo.Echo, serverPort string, gateway string)
 }
 
 func main() {
-	portSuffix := 0
-	serverPort := fmt.Sprintf(":500%d", portSuffix)
-	// no gateway for blockChain servers:
-	common_web.NewServerNode("BlockChain", serverPort, "",
-		registerBlockChainHandlers).InitAndRun()
+	common_web.NewServerNode("BlockChain", config.BlockChainServerPort(),
+		// no gateway for blockChain servers:
+		"", registerBlockChainHandlers).InitAndRun()
 }

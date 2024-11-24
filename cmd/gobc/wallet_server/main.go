@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/paguerre3/blockchain/configs"
@@ -43,10 +41,7 @@ func registerWalletHandlers(e *echo.Echo, serverPort string, gateway string) {
 }
 
 func main() {
-	// The wallet gateway points to a BlockChain server address:
-	portSuffix := 0
-	gateway := fmt.Sprintf("http://localhost:500%d", portSuffix)
-	serverPort := fmt.Sprintf(":808%d", portSuffix)
-	common_web.NewServerNode("Wallet", serverPort, gateway,
-		registerWalletHandlers).InitAndRun()
+	common_web.NewServerNode("Wallet", config.WalletServerPort(),
+		// The wallet gateway points to a BlockChain server address:
+		config.WalletGateway(), registerWalletHandlers).InitAndRun()
 }

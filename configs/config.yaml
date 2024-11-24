@@ -1,6 +1,7 @@
 test:
   serverPort: ":0000"
-blockChain: 
+blockChain:
+  serverPort: ":5000" 
   genesisSenderAddress: "genesis_sender_address"
   genesisRecipientAddress: "genesis_recipient_address"
   miningDifficulty: 3
@@ -9,6 +10,9 @@ blockChain:
   myBlockChainRecipientAddress: "MY_BLOCKCHAIN_RECIPIENT_ADDRESS_TO_OBTAIN_MINING_REWARD"
   checkFunds: false
 wallet:
+  serverPort: ":8080"
+   # The wallet gateway points to a BlockChain server address
+  gateway: "http://localhost:5000"
   frontendDevServer: "http://localhost:5173"
   frontendProdServer: "http://localhost:4173"
   copyrightYear: 2022
