@@ -19,7 +19,7 @@ var (
 )
 
 func newBlockChainWithFmt(checkFunds bool) func() domain.BlockChain {
-	bc := domain.NewBlockchain(config.MyBlockChainRecipientAddres(), checkFunds, config.TestServerPort())
+	bc := domain.NewBlockchain(config.BlockChain().MyRewardRecipientAddress(), checkFunds, config.Test().ServerPort())
 	return func() domain.BlockChain {
 		log.Println(strings.Repeat("#", 75))
 		json, _ := json.MarshalIndent(bc, "", "  ")
@@ -103,7 +103,7 @@ func toggleBlockChainIntegration(checkFunds bool) (float64, float64, float64, fl
 	t2 := fmtTransactionTotal(&blockChain, walletB.BlockChainAddress())
 	t3 := fmtTransactionTotal(&blockChain, walletC.BlockChainAddress())
 	t4 := fmtTransactionTotal(&blockChain, walletD.BlockChainAddress())
-	t5 := fmtTransactionTotal(&blockChain, config.MyBlockChainRecipientAddres()) // check rewards
+	t5 := fmtTransactionTotal(&blockChain, config.BlockChain().MyRewardRecipientAddress()) // check rewards
 	return t1, t2, t3, t4, t5
 }
 

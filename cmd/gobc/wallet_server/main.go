@@ -17,13 +17,13 @@ var (
 )
 
 func registerWalletHandlers(e *echo.Echo, serverPort string, gateway string) {
-	e.Renderer = common_web.NewTemplateRenderer(config.WalletTemplatesDir())
+	e.Renderer = common_web.NewTemplateRenderer(config.Wallet().TemplatesDir())
 
 	// Enable CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{
-			config.WalletFrontendDevServer(),  // React dev server URL
-			config.WalletFrontendProdServer(), // Production
+			config.Wallet().FrontendDevServer(),  // React dev server URL
+			config.Wallet().FrontendProdServer(), // Production
 		},
 		AllowMethods: []string{echo.GET, echo.POST},
 	}))
@@ -41,7 +41,7 @@ func registerWalletHandlers(e *echo.Echo, serverPort string, gateway string) {
 }
 
 func main() {
-	common_web.NewServerNode("Wallet", config.WalletServerPort(),
+	common_web.NewServerNode("Wallet", config.Wallet().ServerPort(),
 		// The wallet gateway points to a BlockChain server address:
-		config.WalletGateway(), registerWalletHandlers).InitAndRun()
+		config.Wallet().Gateway(), registerWalletHandlers).InitAndRun()
 }

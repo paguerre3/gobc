@@ -54,7 +54,8 @@ func NewBlockchain(blockChainAddressOfRewardRecipient string, checkFunds bool, s
 	bc.serverPort = serverPort
 	// add genesis transactions to blockchain Pool
 	// (the is no need of passing public key and signature for the genesis transaction scenario):
-	bc.CreateAppendTransaction(config.GenesisSenderAddress(), config.GenesisRecipientAddress(), 0, nil, nil, nil)
+	bc.CreateAppendTransaction(config.BlockChain().GenesisSenderAddress(), config.BlockChain().GenesisRecipientAddress(),
+		0, nil, nil, nil)
 	bc.CreateAppendBlock(0, emptyBlock.Hash()) // transfer transacton "pool" from blockhain to new block and empty it
 	return bc
 }
@@ -95,7 +96,8 @@ func (bc *blockChain) LastBlock() Block {
 func (bc *blockChain) CreateAppendTransaction(senderAddress string, recipientAddress string, amount float64, timeStamp *time.Time,
 	senderPublicKey *ecdsa.PublicKey, signature common_domain.Signature) (Transaction, error) {
 	t := newTransaction(senderAddress, recipientAddress, amount, timeStamp)
-	if senderAddress == config.MinigSenderAddress() || senderAddress == config.GenesisSenderAddress() {
+	if senderAddress == config.BlockChain().MiningSenderAddress() ||
+		senderAddress == config.BlockChain().GenesisSenderAddress() {
 		// this is a transaction for reward so there is no need to verify the signature
 		// (also, there is no need to verify a genesis transaction case)
 		bc.transactionPool = append(bc.transactionPool, t)
@@ -145,7 +147,7 @@ func (bc *blockChain) ProofOfWork() int {
 	transactions := bc.CopyTransactionPool()
 	previousHash := bc.LastBlock().Hash()
 	nonce := 0
-	for !bc.IsValidProof(nonce, previousHash, transactions, config.MiningDifficulty()) {
+	for !bc.IsValidProof(nonce, previousHash, transactions, config.BlockChain().MiningDifficulty()) {
 		nonce++
 	}
 	return nonce
@@ -154,7 +156,8 @@ func (bc *blockChain) ProofOfWork() int {
 func (bc *blockChain) Mining() bool {
 	// The blockChainn sender sends rewards to the blockChain address because of successfull mining
 	// (no nee to pass public key and signature for "rewards" scenario):
-	bc.CreateAppendTransaction(config.MinigSenderAddress(), bc.BlockChainAddressOfRewardRecipient(), config.MiningReward(), nil, nil, nil)
+	bc.CreateAppendTransaction(config.BlockChain().MiningSenderAddress(), bc.BlockChainAddressOfRewardRecipient(),
+		config.BlockChain().MiningReward(), nil, nil, nil)
 	nonce := bc.ProofOfWork()
 	var b *Block = nil
 	if nonce > 0 {

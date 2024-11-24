@@ -4,139 +4,144 @@ import (
 	"os"
 	"sync"
 
-	coommon_web "github.com/paguerre3/blockchain/internal/common/infrastructure/web"
-
+	common_web "github.com/paguerre3/blockchain/internal/common/infrastructure/web"
 	"gopkg.in/yaml.v3"
 )
 
 var (
 	instance           Config
 	once               sync.Once
-	configPathResolver = coommon_web.NewPathResolver()
+	configPathResolver = common_web.NewPathResolver()
 )
 
+// Interfaces
 type Config interface {
-	TestServerPort() string
+	Test() TestConfig
+	BlockChain() BlockChainConfig
+	Wallet() WalletConfig
+}
 
-	BlockChainServerPort() string
+type TestConfig interface {
+	ServerPort() string
+}
+
+type BlockChainConfig interface {
+	ServerPort() string
 	GenesisSenderAddress() string
 	GenesisRecipientAddress() string
-	MiningDifficulty() int      // increasing difficulty means more time for guessing Nonce, e.g. 4=0000 is arround 10 minutes or more
-	MinigSenderAddress() string // block chain mining server address that "sends" rewards
+	MiningDifficulty() int       // Increasing difficulty means more time for guessing Nonce, e.g., 4=0000 takes around 10 minutes or more.
+	MiningSenderAddress() string // Blockchain mining server address that "sends" rewards.
 	MiningReward() float64
-	MyBlockChainRecipientAddres() string // address for receiving mining rewards
-	CheckFunds() bool                    // enable for prod mode, i.e. to avoid sending money without founds
-
-	WalletServerPort() string
-	WalletGateway() string
-	WalletFrontendDevServer() string
-	WalletFrontendProdServer() string
-	WalletCopyrightYear() int
-	WalletTemplatesDir() string
+	MyRewardRecipientAddress() string // Block Chain address to obtain mining reward.
+	CheckFunds() bool                 // Enable for prod mode to avoid sending money without sufficient funds.
 }
+
+type WalletConfig interface {
+	ServerPort() string
+	Gateway() string
+	FrontendDevServer() string
+	FrontendProdServer() string
+	CopyrightYear() int
+	TemplatesDir() string
+}
+
+// Private Struct Implementations
 
 type config struct {
-	Test struct {
-		ServerPort string `yaml:"serverPort"`
-	} `yaml:"test"`
-	BlockChain struct {
-		ServerPort                   string  `yaml:"serverPort"`
-		GenesisSenderAddress         string  `yaml:"genesisSenderAddress"`
-		GenesisRecipientAddress      string  `yaml:"genesisRecipientAddress"`
-		MiningDifficulty             int     `yaml:"miningDifficulty"`
-		MiningSenderAddress          string  `yaml:"miningSenderAddress"`
-		MiningReward                 float64 `yaml:"miningReward"`
-		MyBlockChainRecipientAddress string  `yaml:"myBlockChainRecipientAddress"`
-		CheckFunds                   bool    `yaml:"checkFunds"`
-	} `yaml:"blockChain"`
-	Wallet struct {
-		ServerPort         string `yaml:"serverPort"`
-		Gateway            string `yaml:"gateway"`
-		FrontendDevServer  string `yaml:"frontendDevServer"`
-		FrontendProdServer string `yaml:"frontendProdServer"`
-		CopyrightYear      int    `yaml:"copyrightYear"`
-		TemplatesDir       string `yaml:"templatesDir"`
-	} `yaml:"wallet"`
+	test       testConfig
+	blockChain blockChainConfig
+	wallet     walletConfig
 }
+
+type testConfig struct {
+	Port string `yaml:"serverPort"`
+}
+
+type blockChainConfig struct {
+	Port                  string  `yaml:"serverPort"`
+	GenesisSenderAddr     string  `yaml:"genesisSenderAddress"`
+	GenesisRecipientAddr  string  `yaml:"genesisRecipientAddress"`
+	MiningDiff            int     `yaml:"miningDifficulty"`
+	MiningSenderAddr      string  `yaml:"miningSenderAddress"`
+	MiningRewd            float64 `yaml:"miningReward"`
+	MyRewardRecipientAddr string  `yaml:"myRewardRecipientAddress"`
+	ChkFunds              bool    `yaml:"checkFunds"`
+}
+
+type walletConfig struct {
+	Port            string `yaml:"serverPort"`
+	Gwy             string `yaml:"gateway"`
+	FrontendDevSrv  string `yaml:"frontendDevServer"`
+	FrontendProdSrv string `yaml:"frontendProdServer"`
+	CopyrYear       int    `yaml:"copyrightYear"`
+	TempltDir       string `yaml:"templatesDir"`
+}
+
+// Singleton Instance Function
 
 func Instance() Config {
 	if instance == nil {
 		once.Do(func() {
 			if instance == nil {
-				// TODO: load from config file accordimng to proper environment
 				configPath := configPathResolver("configs/config.yaml")
 				data, err := os.ReadFile(configPath)
 				if err != nil {
 					panic(err)
 				}
 
-				var conf config
-				if err := yaml.Unmarshal(data, &conf); err != nil {
+				var raw struct {
+					Test       testConfig       `yaml:"test"`
+					BlockChain blockChainConfig `yaml:"blockChain"`
+					Wallet     walletConfig     `yaml:"wallet"`
+				}
+
+				if err := yaml.Unmarshal(data, &raw); err != nil {
 					panic(err)
 				}
-				instance = &conf
+
+				instance = &config{
+					test:       raw.Test,
+					blockChain: raw.BlockChain,
+					wallet:     raw.Wallet,
+				}
 			}
 		})
 	}
 	return instance
 }
 
-func (c *config) TestServerPort() string {
-	return c.Test.ServerPort
+// Methods to implement interfaces
+
+func (c *config) Test() TestConfig {
+	return &c.test
 }
 
-func (c *config) BlockChainServerPort() string {
-	return c.BlockChain.ServerPort
+func (c *config) BlockChain() BlockChainConfig {
+	return &c.blockChain
 }
 
-func (c *config) GenesisSenderAddress() string {
-	return c.BlockChain.GenesisSenderAddress
+func (c *config) Wallet() WalletConfig {
+	return &c.wallet
 }
 
-func (c *config) GenesisRecipientAddress() string {
-	return c.BlockChain.GenesisRecipientAddress
+func (t *testConfig) ServerPort() string {
+	return t.Port
 }
 
-func (c *config) MiningDifficulty() int {
-	return c.BlockChain.MiningDifficulty
+func (b *blockChainConfig) ServerPort() string              { return b.Port }
+func (b *blockChainConfig) GenesisSenderAddress() string    { return b.GenesisSenderAddr }
+func (b *blockChainConfig) GenesisRecipientAddress() string { return b.GenesisRecipientAddr }
+func (b *blockChainConfig) MiningDifficulty() int           { return b.MiningDiff }
+func (b *blockChainConfig) MiningSenderAddress() string     { return b.MiningSenderAddr }
+func (b *blockChainConfig) MiningReward() float64           { return b.MiningRewd }
+func (b *blockChainConfig) MyRewardRecipientAddress() string {
+	return b.MyRewardRecipientAddr
 }
+func (b *blockChainConfig) CheckFunds() bool { return b.ChkFunds }
 
-func (c *config) MinigSenderAddress() string {
-	return c.BlockChain.MiningSenderAddress
-}
-
-func (c *config) MiningReward() float64 {
-	return c.BlockChain.MiningReward
-}
-
-func (c *config) MyBlockChainRecipientAddres() string {
-	return c.BlockChain.MyBlockChainRecipientAddress
-}
-
-func (c *config) CheckFunds() bool {
-	return c.BlockChain.CheckFunds
-}
-
-func (c *config) WalletServerPort() string {
-	return c.Wallet.ServerPort
-}
-
-func (c *config) WalletGateway() string {
-	return c.Wallet.Gateway
-}
-
-func (c *config) WalletFrontendDevServer() string {
-	return c.Wallet.FrontendDevServer
-}
-
-func (c *config) WalletFrontendProdServer() string {
-	return c.Wallet.FrontendProdServer
-}
-
-func (c *config) WalletCopyrightYear() int {
-	return c.Wallet.CopyrightYear
-}
-
-func (c *config) WalletTemplatesDir() string {
-	return c.Wallet.TemplatesDir
-}
+func (w *walletConfig) ServerPort() string         { return w.Port }
+func (w *walletConfig) Gateway() string            { return w.Gwy }
+func (w *walletConfig) FrontendDevServer() string  { return w.FrontendDevSrv }
+func (w *walletConfig) FrontendProdServer() string { return w.FrontendProdSrv }
+func (w *walletConfig) CopyrightYear() int         { return w.CopyrYear }
+func (w *walletConfig) TemplatesDir() string       { return w.TempltDir }

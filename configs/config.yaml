@@ -7,7 +7,7 @@ blockChain:
   miningDifficulty: 3
   miningSenderAddress: "THE_BLOCKCHAIN_MINING_SENDER_ADDRESS"
   miningReward: 1.0
-  myBlockChainRecipientAddress: "MY_BLOCKCHAIN_RECIPIENT_ADDRESS_TO_OBTAIN_MINING_REWARD"
+  myRewardRecipientAddress: "MY_BLOCKCHAIN_RECIPIENT_ADDRESS_TO_OBTAIN_MINING_REWARD"
   checkFunds: false
 wallet:
   serverPort: ":8080"

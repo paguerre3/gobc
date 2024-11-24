@@ -18,7 +18,7 @@ func TestGetBlockChainUseCase(t *testing.T) {
 
 	// Test case 1: cache hit
 	wallet1 := wallet_domain.NewWallet()
-	serverPort := config.TestServerPort()
+	serverPort := config.Test().ServerPort()
 	gbc := NewGetBlockChainUseCase(wallet1, serverPort, true)
 	bc1, ok1 := gbc.Instance()
 	assert.NotNil(t, bc1)
@@ -34,7 +34,7 @@ func TestGetBlockChainUseCase(t *testing.T) {
 
 	// Test case 2: cache miss, so create and get new instance
 	wallet2 := wallet_domain.NewWallet()
-	serverPort2 := strings.ReplaceAll(config.TestServerPort(), "0", "1")
+	serverPort2 := strings.ReplaceAll(config.Test().ServerPort(), "0", "1")
 	gbc2 := NewGetBlockChainUseCase(wallet2, serverPort2, true)
 	bc2, _ := gbc2.Instance()
 	assert.NotNil(t, bc2)

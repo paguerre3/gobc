@@ -15,7 +15,7 @@ var (
 
 func TestGetWalletUseCase(t *testing.T) {
 	// Create a test server port
-	serverPort := config.TestServerPort()
+	serverPort := config.Test().ServerPort()
 
 	// Create a test GetWalletUseCase instance
 	gwc := NewGetWalletUseCase(serverPort)

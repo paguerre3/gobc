@@ -17,10 +17,10 @@ var (
 
 func registerBlockChainHandlers(e *echo.Echo, serverPort string, gateway string) {
 	// Use cases
-	getWalletUseCase := wallet_app.NewGetWalletUseCase(config.WalletServerPort())
+	getWalletUseCase := wallet_app.NewGetWalletUseCase(config.Wallet().ServerPort())
 	wallet, _ := getWalletUseCase.Instance()
 	getBlockChainUseCase := application.NewGetBlockChainUseCase(wallet,
-		serverPort, config.CheckFunds())
+		serverPort, config.BlockChain().CheckFunds())
 
 	// Handlers
 	blockChainApi := block_chain_api.NewBlockChainHandler(getBlockChainUseCase)
@@ -29,7 +29,7 @@ func registerBlockChainHandlers(e *echo.Echo, serverPort string, gateway string)
 }
 
 func main() {
-	common_web.NewServerNode("BlockChain", config.BlockChainServerPort(),
+	common_web.NewServerNode("BlockChain", config.BlockChain().ServerPort(),
 		// no gateway for blockChain servers:
 		"", registerBlockChainHandlers).InitAndRun()
 }

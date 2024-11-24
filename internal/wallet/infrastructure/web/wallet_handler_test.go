@@ -19,7 +19,7 @@ var (
 func TestWalletHandlerContact(t *testing.T) {
 	// Create a test Echo instance
 	e := echo.New()
-	e.Renderer = common_web.NewTemplateRenderer(config.WalletTemplatesDir())
+	e.Renderer = common_web.NewTemplateRenderer(config.Wallet().TemplatesDir())
 
 	getCopyrightUseCase := common_app.NewGetCopyrightUseCase()
 	// Create a test WalletHandler instance

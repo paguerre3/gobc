@@ -20,7 +20,7 @@ var (
 
 func TestBlockChainHandler(t *testing.T) {
 	// Create a test GetBlockChainUseCase instance
-	walletServerPort := config.TestServerPort()
+	walletServerPort := config.Test().ServerPort()
 	blockChainServerPort := strings.ReplaceAll(walletServerPort, "0", "1")
 	getWalletUseCase := wallet_app.NewGetWalletUseCase(walletServerPort)
 	wallet, _ := getWalletUseCase.Instance()
@@ -30,7 +30,7 @@ func TestBlockChainHandler(t *testing.T) {
 	// Create a test BlockChainHandler instance
 	bch := NewBlockChainHandler(getBlockChainUseCase)
 
-	// Test case 1: GetBlockChain with existing block chain
+	// Test case 1: GetBlockChain (creation of new block chain)
 	req, err := http.NewRequest("GET", "/block-chain-mock", nil)
 	assert.NoError(t, err)
 	rec := httptest.NewRecorder()

@@ -22,5 +22,5 @@ func NewGetCopyrightUseCase() GetCopyrightUseCase {
 }
 
 func (g *getCopyrightUseCase) GetCopyright() *PageData {
-	return &PageData{Year: config.WalletCopyrightYear()}
+	return &PageData{Year: config.Wallet().CopyrightYear()}
 }

@@ -13,5 +13,5 @@ func TestGetCopyrightUseCase(t *testing.T) {
 	// Test case 1: GetCopyright method
 	pageData := getCopyrightUseCase.GetCopyright()
 	assert.NotNil(t, pageData)
-	assert.Equal(t, config.WalletCopyrightYear(), pageData.Year)
+	assert.Equal(t, config.Wallet().CopyrightYear(), pageData.Year)
 }
