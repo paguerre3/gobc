@@ -3,7 +3,7 @@ import React from 'react'
 export default function Wallet() {
   return (
     <div className='container'>
-      <button className="button">Reload Balance</button>
+      <button className="button">Reload Wallet</button>
       <div className='features'>
         <p><h2>Wallet</h2></p>
         <h2><div id="walletBalance">0</div></h2>
@@ -23,9 +23,8 @@ export default function Wallet() {
 
         <p><strong>Receipient Blockchain Address</strong></p>
         <textarea id="receipientBlockChainAddress" cols="73" rows="1"></textarea>
-        <h2><button className="button">Send</button></h2>
       </div>
-      
+      <h2><button className="button">Send</button></h2>
     </div>
   )
 }
