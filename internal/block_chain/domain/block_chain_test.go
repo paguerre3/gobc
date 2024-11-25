@@ -49,7 +49,7 @@ func TestBlockchainCreateAppendTransaction(t *testing.T) {
 	assert.Len(t, b.Transactions(), 1)
 
 	wallet := wallet_domain.NewWallet()
-	wtx := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver", 10.99)
+	wtx, _ := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver", 10.99)
 	wtt := wtx.TimeStamp()
 	signature, err := wtx.GenerateSignature()
 	assert.NoError(t, err)
@@ -68,7 +68,7 @@ func TestBlockchainCreateAppendTransactionCheckingFunds(t *testing.T) {
 	assert.Len(t, b.Transactions(), 1)
 
 	wallet := wallet_domain.NewWallet()
-	wtx := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver", 10.99)
+	wtx, _ := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver", 10.99)
 	wtt := wtx.TimeStamp()
 	signature, err := wtx.GenerateSignature()
 	assert.NoError(t, err)
@@ -105,11 +105,11 @@ func TestBlockchainTransactionPool(t *testing.T) {
 	assert.Equal(t, config.BlockChain().GenesisRecipientAddress(), tx.RecipientAddress())
 
 	wallet := wallet_domain.NewWallet()
-	wtx := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver1", 10.99)
+	wtx, _ := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver1", 10.99)
 	wtt := wtx.TimeStamp()
 	signature, err := wtx.GenerateSignature()
 	assert.NoError(t, err)
-	wtx2 := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver2", 20.99)
+	wtx2, _ := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "receiver2", 20.99)
 	wtt2 := wtx2.TimeStamp()
 	signature2, err := wtx2.GenerateSignature()
 	assert.NoError(t, err)
@@ -186,19 +186,19 @@ func TestBlockchainCalculateTransactionTotal(t *testing.T) {
 	bc := NewBlockchain(config.BlockChain().MyRewardRecipientAddress(), false, config.Test().ServerPort())
 
 	wallet1 := wallet_domain.NewWallet()
-	wtx1 := wallet_domain.NewTransaction(wallet1.PrivateKey(), wallet1.BlockChainAddress(), "receiver1", 10.99)
+	wtx1, _ := wallet_domain.NewTransaction(wallet1.PrivateKey(), wallet1.BlockChainAddress(), "receiver1", 10.99)
 	wtt1 := wtx1.TimeStamp()
 	signature1, err := wtx1.GenerateSignature()
 	assert.NoError(t, err)
 
 	wallet2 := wallet_domain.NewWallet()
-	wtx2 := wallet_domain.NewTransaction(wallet2.PrivateKey(), wallet2.BlockChainAddress(), "receiver2", 20.99)
+	wtx2, _ := wallet_domain.NewTransaction(wallet2.PrivateKey(), wallet2.BlockChainAddress(), "receiver2", 20.99)
 	wtt2 := wtx2.TimeStamp()
 	signature2, err := wtx2.GenerateSignature()
 	assert.NoError(t, err)
 
 	wallet3 := wallet_domain.NewWallet()
-	wtx3 := wallet_domain.NewTransaction(wallet3.PrivateKey(), wallet3.BlockChainAddress(), "receiver1", 30.99)
+	wtx3, _ := wallet_domain.NewTransaction(wallet3.PrivateKey(), wallet3.BlockChainAddress(), "receiver1", 30.99)
 	wtt3 := wtx3.TimeStamp()
 	signature3, err := wtx3.GenerateSignature()
 	assert.NoError(t, err)
@@ -229,7 +229,7 @@ func TestVerifyTransactionSignature(t *testing.T) {
 
 	// Create a test transaction
 	wallet := wallet_domain.NewWallet()
-	tx := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "recipient", 10.99)
+	tx, _ := wallet_domain.NewTransaction(wallet.PrivateKey(), wallet.BlockChainAddress(), "recipient", 10.99)
 
 	// Generate a signature for the transaction
 	signature, err := tx.GenerateSignature()

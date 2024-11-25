@@ -62,7 +62,7 @@ func toggleBlockChainIntegration(checkFunds bool) (float64, float64, float64, fl
 	walletD := newWalletFmtd()
 
 	// Wallet A address is Sender and Wallet B address is Recipient.
-	tx1 := wallet_domain.NewTransaction(walletA.PrivateKey(), walletA.BlockChainAddress(), walletB.BlockChainAddress(), 1.0)
+	tx1, _ := wallet_domain.NewTransaction(walletA.PrivateKey(), walletA.BlockChainAddress(), walletB.BlockChainAddress(), 1.0)
 	tt1 := tx1.TimeStamp()
 	signature1 := fmtTransactionSignature(&tx1)
 
@@ -80,14 +80,14 @@ func toggleBlockChainIntegration(checkFunds bool) (float64, float64, float64, fl
 	fmtBlockChain()
 
 	// Wallet B address is Sender and Wallet D address is Recipient.
-	tx2 := wallet_domain.NewTransaction(walletB.PrivateKey(), walletB.BlockChainAddress(), walletD.BlockChainAddress(), 2.5)
+	tx2, _ := wallet_domain.NewTransaction(walletB.PrivateKey(), walletB.BlockChainAddress(), walletD.BlockChainAddress(), 2.5)
 	tt2 := tx2.TimeStamp()
 	signature2 := fmtTransactionSignature(&tx2)
 	blockChain.CreateAppendTransaction(walletB.BlockChainAddress(), walletD.BlockChainAddress(), tx2.Amount(), &tt2,
 		walletB.PublicKey(), signature2)
 
 	// Wallet C address is Sender and Wallet D address is Recipient.
-	tx3 := wallet_domain.NewTransaction(walletC.PrivateKey(), walletC.BlockChainAddress(), walletD.BlockChainAddress(), 5.0)
+	tx3, _ := wallet_domain.NewTransaction(walletC.PrivateKey(), walletC.BlockChainAddress(), walletD.BlockChainAddress(), 5.0)
 	tt3 := tx3.TimeStamp()
 	signature3 := fmtTransactionSignature(&tx3)
 	blockChain.CreateAppendTransaction(walletC.BlockChainAddress(), walletD.BlockChainAddress(), tx3.Amount(), &tt3,

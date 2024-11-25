@@ -5,6 +5,8 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
+	"errors"
+	"strings"
 	"time"
 
 	common_domain "github.com/paguerre3/blockchain/internal/common/domain"
@@ -30,7 +32,23 @@ type transaction struct {
 	timeStamp        time.Time
 }
 
-func NewTransaction(senderPrivateKey *ecdsa.PrivateKey, senderAddress string, recipientAddress string, amount float64) Transaction {
+func NewTransaction(senderPrivateKey *ecdsa.PrivateKey, senderAddress string, recipientAddress string, amount float64) (Transaction, error) {
+	var em []string
+	if senderPrivateKey == nil {
+		em = append(em, "senderPrivateKey is missing")
+	}
+	if senderAddress == "" {
+		em = append(em, "senderAddress is missing")
+	}
+	if recipientAddress == "" {
+		em = append(em, "recipientAddress is missing")
+	}
+	if amount == 0 {
+		em = append(em, "amount is invaid")
+	}
+	if len(em) > 0 {
+		return nil, errors.New(strings.Join(em, ", "))
+	}
 	return &transaction{
 		senderPrivateKey: senderPrivateKey,
 		senderPublicKey:  &senderPrivateKey.PublicKey,
@@ -38,7 +56,7 @@ func NewTransaction(senderPrivateKey *ecdsa.PrivateKey, senderAddress string, re
 		recipientAddress: recipientAddress,
 		amount:           amount,
 		timeStamp:        time.Now(),
-	}
+	}, nil
 }
 
 func (t *transaction) SenderPrivateKey() *ecdsa.PrivateKey {
