@@ -95,7 +95,7 @@ func (w *wallet) MarshalJSON() ([]byte, error) {
 		BlockChainAddress string `json:"blockChainAddress"`
 	}{
 		PrivateKey:        fmt.Sprintf("%x", w.privateKey.D.Bytes()), // hex.EncodeToString(hash[:]) OR: fmt.Sprintf("%x", hash) // %x	base 16, with lower-case letters for a-f
-		PublicKey:         fmt.Sprintf("%x%x", w.publicKey.X.Bytes(), w.publicKey.Y.Bytes()),
+		PublicKey:         fmt.Sprintf("%064x%064x", w.publicKey.X.Bytes(), w.publicKey.Y.Bytes()),
 		BlockChainAddress: w.blockChainAddress,
 	})
 }

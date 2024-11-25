@@ -107,7 +107,7 @@ func (t *transaction) MarshalJSON() ([]byte, error) {
 	}{
 		//Avoid using keys as they will be used by the signature of the transaction:
 		//SenderPrivateKey: fmt.Sprintf("%x", t.senderPrivateKey.D.Bytes()), // hex.EncodeToString(hash[:]) OR: fmt.Sprintf("%x", hash) // %x	base 16, with lower-case letters for a-f
-		//SenderPublicKey:  fmt.Sprintf("%x%x", t.senderPublicKey.X.Bytes(), t.senderPublicKey.Y.Bytes()),
+		//SenderPublicKey:  fmt.Sprintf("%064x%064x", t.senderPublicKey.X.Bytes(), t.senderPublicKey.Y.Bytes()),
 		SenderAddress:    t.senderAddress,
 		RecipientAddress: t.recipientAddress,
 		Amount:           t.amount,
