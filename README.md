@@ -258,6 +258,17 @@ To run React app in production mode, follow these steps:
 
 
 ---
+## Create Transaction Flow
+
+1. From **Wallet Frontend (React:4173)** 
+2. To **→** **Wallet Backed** (Go Sever:8080)
+3. To **→** **BlockChain Backed** (Go Sever:5000)
+
+![create transaction flow](./assets/11_front_end_wallet_backend_blockchain_backend.png)
+
+
+
+---
 ## SAGA
 
 The **Saga pattern** is a design pattern **used to manage distributed transactions in microservices architectures**. In traditional monolithic systems, a single transaction could be easily managed with ACID properties (Atomicity, Consistency, Isolation, Durability). However, **in a microservices environment, where each service has its own database, it's difficult to maintain a single atomic transaction across multiple services**.

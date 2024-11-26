@@ -2,6 +2,7 @@ package application
 
 import (
 	common_domain "github.com/paguerre3/blockchain/internal/common/domain"
+	"github.com/paguerre3/blockchain/internal/wallet/domain"
 )
 
 type CreateTransactionUseCase interface {
@@ -19,6 +20,9 @@ func NewCreateTransactionUseCase(getWalletUseCase GetWalletUseCase) CreateTransa
 }
 
 func (c *createTransactionUseCase) Execute(transactionRequest TransactionRequest) error {
+	// TODO
+	transactionRequest.ValidateIdempotency()
+
 	senderPublicKey := common_domain.PublicKeyFromString(
 		common_domain.ToSafeStr(transactionRequest.SenderPublicKey))
 	senderPrivateKey := common_domain.PrivateKeyFromString(
@@ -28,5 +32,8 @@ func (c *createTransactionUseCase) Execute(transactionRequest TransactionRequest
 	recipientBlockChainAddress := common_domain.ToSafeStr(transactionRequest.RecipientBlockChainAddress)
 
 	amount := common_domain.ToSafeFloat64(transactionRequest.Amount)
-	return nil
+
+	// TODO (add domain error)
+	_, err := domain.NewTransaction(senderPrivateKey, senderBlockChainAddress, recipientBlockChainAddress, amount)
+	return err
 }
