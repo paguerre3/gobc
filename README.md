@@ -261,8 +261,8 @@ To run React app in production mode, follow these steps:
 ## Create Transaction Flow
 
 1. From **Wallet Frontend (React:4173)** 
-2. To **→** **Wallet Backed** (Go Sever:8080)
-3. To **→** **BlockChain Backed** (Go Sever:5000)
+2. To **→** **Wallet Backed (Go Sever:8080)**
+3. To **→** **BlockChain Backed (Go Sever:5000)**
 
 ![create transaction flow](./assets/11_front_end_wallet_backend_blockchain_backend.png)
 
