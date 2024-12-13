@@ -22,7 +22,8 @@ go.work
 go.work.sum
 
 # env file
-.env
+# TODO uncomment .env from repo once env supports distinct values for every environment, i.e. dev vs. prod URLs should be different
+#.env
 
 # delve debug
 __debug*
