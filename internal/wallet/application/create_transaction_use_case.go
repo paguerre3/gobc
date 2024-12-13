@@ -1,8 +1,18 @@
 package application
 
 import (
+	"fmt"
+	"time"
+
+	"github.com/labstack/gommon/log"
+	"github.com/paguerre3/blockchain/configs"
 	common_domain "github.com/paguerre3/blockchain/internal/common/domain"
 	"github.com/paguerre3/blockchain/internal/wallet/domain"
+)
+
+var (
+	txRequestLock = common_domain.NewLock()
+	config        = configs.Instance()
 )
 
 type CreateTransactionUseCase interface {
@@ -20,8 +30,13 @@ func NewCreateTransactionUseCase(getWalletUseCase GetWalletUseCase) CreateTransa
 }
 
 func (c *createTransactionUseCase) Execute(transactionRequest TransactionRequest) error {
-	// TODO
-	transactionRequest.ValidateIdempotency()
+	idempotencyKey := common_domain.ToSafeStr(transactionRequest.IdempotencyKey)
+	lockTimeout := time.Duration(config.Lock().TimeOutInSeconds()) * time.Second
+	if err := txRequestLock.Acquire(idempotencyKey, lockTimeout); err != nil {
+		return fmt.Errorf("failed to acquire lock for key %s wiyh request %+v: %w",
+			idempotencyKey, transactionRequest, err)
+	}
+	defer txRequestLock.Release(idempotencyKey)
 
 	senderPublicKey := common_domain.PublicKeyFromString(
 		common_domain.ToSafeStr(transactionRequest.SenderPublicKey))
@@ -33,7 +48,9 @@ func (c *createTransactionUseCase) Execute(transactionRequest TransactionRequest
 
 	amount := common_domain.ToSafeFloat64(transactionRequest.Amount)
 
-	// TODO (add domain error)
-	_, err := domain.NewTransaction(senderPrivateKey, senderBlockChainAddress, recipientBlockChainAddress, amount)
+	newTransaction, err := domain.NewTransaction(senderPrivateKey, senderBlockChainAddress, recipientBlockChainAddress, amount)
+	log.Infof("New Transaction: %+v", newTransaction) // including timestamp
+
+	// TODO domain error in echo middleware ??
 	return err
 }

@@ -5,16 +5,11 @@ import (
 )
 
 type TransactionRequest struct {
-	IdempotentKey              *string                  `json:"_idempotentKey"`
+	IdempotencyKey             *string                  `json:"_idempotencyKey"`
 	SenderPrivateKey           *string                  `json:"senderPrivateKey"`
 	SenderPublicKey            *string                  `json:"senderPublicKey"`
 	SenderBlockChainAddress    *string                  `json:"senderBlockChainAddress"`
 	RecipientBlockChainAddress *string                  `json:"recipientBlockChainAddress"`
 	Amount                     *float64                 `json:"amount"`
 	Signature                  *common_domain.Signature `json:"signature"`
-}
-
-func (t *TransactionRequest) ValidateIdempotency() error {
-	// TODO
-	return nil
 }

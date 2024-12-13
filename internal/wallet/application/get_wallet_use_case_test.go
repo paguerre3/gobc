@@ -5,12 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/paguerre3/blockchain/configs"
 	"github.com/stretchr/testify/assert"
-)
-
-var (
-	config = configs.Instance()
 )
 
 func TestGetWalletUseCase(t *testing.T) {

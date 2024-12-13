@@ -1,0 +1,5 @@
+{
+    "go.toolsEnvVars": {
+        "GODEBUG": "gc.concurrent=true"
+    }
+}

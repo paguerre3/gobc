@@ -17,3 +17,7 @@ wallet:
   frontendProdServer: "http://localhost:4173"
   copyrightYear: 2022
   templatesDir: "internal/wallet/infrastructure/templates"
+lock:
+  timeOutInSeconds: 3
+  initialBackoffInMillis: 100
+  backoffMultiplier: 2

@@ -19,6 +19,7 @@ type Config interface {
 	Test() TestConfig
 	BlockChain() BlockChainConfig
 	Wallet() WalletConfig
+	Lock() LockConfig
 }
 
 type TestConfig interface {
@@ -45,12 +46,19 @@ type WalletConfig interface {
 	TemplatesDir() string
 }
 
+type LockConfig interface {
+	TimeOutInSeconds() int
+	InitialBackoffInMillis() int
+	BackoffMultiplier() int
+}
+
 // Private Struct Implementations
 
 type config struct {
 	test       testConfig
 	blockChain blockChainConfig
 	wallet     walletConfig
+	lock       lockConfig
 }
 
 type testConfig struct {
@@ -77,6 +85,12 @@ type walletConfig struct {
 	TempltDir       string `yaml:"templatesDir"`
 }
 
+type lockConfig struct {
+	TimeOutInSecs       int `yaml:"timeOutInSeconds"`
+	InitBackoffInMillis int `yaml:"initialBackoffInMillis"`
+	BackoffMultip       int `yaml:"backoffMultiplier"`
+}
+
 // Singleton Instance Function
 
 func Instance() Config {
@@ -93,6 +107,7 @@ func Instance() Config {
 					Test       testConfig       `yaml:"test"`
 					BlockChain blockChainConfig `yaml:"blockChain"`
 					Wallet     walletConfig     `yaml:"wallet"`
+					Lock       lockConfig       `yaml:"lock"`
 				}
 
 				if err := yaml.Unmarshal(data, &raw); err != nil {
@@ -103,6 +118,7 @@ func Instance() Config {
 					test:       raw.Test,
 					blockChain: raw.BlockChain,
 					wallet:     raw.Wallet,
+					lock:       raw.Lock,
 				}
 			}
 		})
@@ -124,20 +140,20 @@ func (c *config) Wallet() WalletConfig {
 	return &c.wallet
 }
 
-func (t *testConfig) ServerPort() string {
-	return t.Port
+func (c *config) Lock() LockConfig {
+	return &c.lock
 }
 
-func (b *blockChainConfig) ServerPort() string              { return b.Port }
-func (b *blockChainConfig) GenesisSenderAddress() string    { return b.GenesisSenderAddr }
-func (b *blockChainConfig) GenesisRecipientAddress() string { return b.GenesisRecipientAddr }
-func (b *blockChainConfig) MiningDifficulty() int           { return b.MiningDiff }
-func (b *blockChainConfig) MiningSenderAddress() string     { return b.MiningSenderAddr }
-func (b *blockChainConfig) MiningReward() float64           { return b.MiningRewd }
-func (b *blockChainConfig) MyRewardRecipientAddress() string {
-	return b.MyRewardRecipientAddr
-}
-func (b *blockChainConfig) CheckFunds() bool { return b.ChkFunds }
+func (t *testConfig) ServerPort() string { return t.Port }
+
+func (b *blockChainConfig) ServerPort() string               { return b.Port }
+func (b *blockChainConfig) GenesisSenderAddress() string     { return b.GenesisSenderAddr }
+func (b *blockChainConfig) GenesisRecipientAddress() string  { return b.GenesisRecipientAddr }
+func (b *blockChainConfig) MiningDifficulty() int            { return b.MiningDiff }
+func (b *blockChainConfig) MiningSenderAddress() string      { return b.MiningSenderAddr }
+func (b *blockChainConfig) MiningReward() float64            { return b.MiningRewd }
+func (b *blockChainConfig) MyRewardRecipientAddress() string { return b.MyRewardRecipientAddr }
+func (b *blockChainConfig) CheckFunds() bool                 { return b.ChkFunds }
 
 func (w *walletConfig) ServerPort() string         { return w.Port }
 func (w *walletConfig) Gateway() string            { return w.Gwy }
@@ -145,3 +161,7 @@ func (w *walletConfig) FrontendDevServer() string  { return w.FrontendDevSrv }
 func (w *walletConfig) FrontendProdServer() string { return w.FrontendProdSrv }
 func (w *walletConfig) CopyrightYear() int         { return w.CopyrYear }
 func (w *walletConfig) TemplatesDir() string       { return w.TempltDir }
+
+func (l *lockConfig) TimeOutInSeconds() int       { return l.TimeOutInSecs }
+func (l *lockConfig) InitialBackoffInMillis() int { return l.InitBackoffInMillis }
+func (l *lockConfig) BackoffMultiplier() int      { return l.BackoffMultip }

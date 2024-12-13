@@ -24,4 +24,7 @@ func TestConfigs(t *testing.T) {
 	assert.Equal(t, "http://localhost:4173", config.Wallet().FrontendProdServer())
 	assert.Equal(t, 2022, config.Wallet().CopyrightYear())
 	assert.Equal(t, "internal/wallet/infrastructure/templates", config.Wallet().TemplatesDir())
+	assert.Equal(t, 10, config.Lock().InitialBackoffInMillis())
+	assert.Equal(t, 2, config.Lock().BackoffMultiplier())
+	assert.Equal(t, 3, config.Lock().TimeOutInSeconds())
 }
