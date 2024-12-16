@@ -523,4 +523,5 @@ The number of members required for consensus in a blockchain network depends on 
 - [SDL](./docs/sdl/README.md)
 - [OWASP](./docs/owasp/README.md)
 - [PostgreSQL](./docs/postgresql/README.md)
+- [Buffered channels](./docs/bufferend_chans/README.md)
 
